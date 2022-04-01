@@ -28,14 +28,32 @@ function App() {
 
   const [state, setState] = useState({});
 
+  // useEffect(() => {
+  //   if (readyState, ReadyState.OPEN) {
+  //     const clientId = Date.now();
+  //     sendMessage(JSON.stringify({
+  //       type: 'new-client',
+  //       message: clientId
+  //     }))
+  //   }
+  // }, [readyState]);
+
   useEffect(() => {
     if (!lastMessage) return;
-    // const data = JSON.parse(JSON.parse(lastMessage.data));
-    console.log('Data received: ', JSON.parse(lastMessage.data));
-    // setState(data)
+    const data = JSON.parse(lastMessage.data);
+    setState(data)
+    console.log('Data received:', data);
+    if (data['type'] == 'addedInPool') {
+      console.log('inside......', data.message);
+      sessionStorage.setItem('clientId', data.message)
+    }
   }, [lastMessage]);
 
   useEffect(() => {
+    // sendMessage(JSON.stringify({
+    //   type: 'start',
+    //   clientId: sessionStorage.getItem('clientId')
+    // }))
     sendMessage('start')
   }, [])
 

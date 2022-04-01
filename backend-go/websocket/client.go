@@ -1,21 +1,10 @@
 package websocket
 
 import (
-    "fmt"
-    "log"
-    "github.com/gorilla/websocket"
+	"log"
+	
+    "github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
 )
-
-type Client struct {
-    ID   string
-    Conn *websocket.Conn
-    Pool *Pool
-}
-
-type Message struct {
-    Type int    `json:"type"`
-    Body string `json:"body"`
-}
 
 func (c *Client) Read() {
     defer func() {
@@ -24,13 +13,21 @@ func (c *Client) Read() {
     }()
 
     for {
-        messageType, p, err := c.Conn.ReadMessage()
+        _, p, err := c.Conn.ReadMessage()
         if err != nil {
             log.Println(err)
             return
         }
-        message := Message{Type: messageType, Body: string(p)}
-        c.Pool.Broadcast <- message
-        fmt.Printf("Message Received: %+v\n", message)
+        trafficLightMom := trafficlight.TrafficLights[c.ID]
+
+        if string(p) == "start" {
+			trafficLightMom.Start()
+		} else if string(p) == "error" {
+			trafficLightMom.SystemError()
+		} else if string(p) == "restart" {
+			trafficLightMom.SystemRestart()
+		} else if string(p) == "end" {
+			trafficLightMom.Stop()
+		}
     }
 }

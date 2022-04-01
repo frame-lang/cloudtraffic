@@ -74,55 +74,58 @@ func (m *trafficLightStruct) log(msg string) {}
 
 func (m *trafficLightMomStruct) initTrafficLight() {
 	res := createResponse("begin", "", true)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 	time.Sleep(1 * time.Second)
 }
 
 func (m *trafficLightMomStruct) destroyTrafficLight() {
 	res := createResponse("end", "", false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
 
 func (m *trafficLightMomStruct) enterRed() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("working", color, false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
 
 func (m *trafficLightMomStruct) enterGreen() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("working", color, false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
 
 func (m *trafficLightMomStruct) enterYellow() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("working", color, false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
 
 func (m *trafficLightMomStruct) enterFlashingRed() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("error", color, false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
+
 func (m *trafficLightMomStruct) exitFlashingRed() {
 }
 
 func (m *trafficLightMomStruct) startWorkingTimer() {
-	Stopper = SetInterval(MOM.Tick, 2*time.Second)
+	mom:= TrafficLights[m.clientId]
+	m.stopper = SetInterval(mom.Tick, 2*time.Second)
 }
 
 func (m *trafficLightMomStruct) stopWorkingTimer() {
-	Stopper <- true
+	m.stopper <- true
 }
 
 func (m *trafficLightMomStruct) startFlashingTimer() {
-	Stopper = SetInterval(MOM.Tick, 1*time.Second)
+	mom:= TrafficLights[m.clientId]
+	m.stopper = SetInterval(mom.Tick, 1*time.Second)
 }
 
 func (m *trafficLightMomStruct) stopFlashingTimer() {
-	Stopper <- true
+	m.stopper <- true
 }
 
 func (m *trafficLightMomStruct) startFlashing() {}
@@ -131,7 +134,7 @@ func (m *trafficLightMomStruct) stopFlashing()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("error", color, false)
-	sendResponse(res)
+	sendResponse(res, m.connection)
 }
 
 func (m *trafficLightMomStruct) log(msg string) {}

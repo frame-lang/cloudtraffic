@@ -1,7 +1,6 @@
 package trafficlight
 
 import (
-	"encoding/json"
 	"log"
 	"reflect"
 	"time"
@@ -9,33 +8,22 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type commandStruct struct {
+type StateResponse struct {
 	Name    string `json:"name"`
 	Message string `json:"message"`
 	Loading bool   `json:"loading"`
 }
 
-var Stopper chan<- bool
-var SocketConn *websocket.Conn
-var MOM TrafficLightMom
-
-func CreateNewTrafficLight() {
-	MOM = NewTrafficLightMom()
-}
-
-func createResponse(state string, message string, loading bool) string {
-	command := &commandStruct{
+func createResponse(state string, message string, loading bool) StateResponse {
+	return StateResponse {
 		Name:    state,
 		Message: message,
 		Loading: loading,
 	}
-
-	json, _ := json.Marshal(command)
-	return string(json)
 }
 
-func sendResponse(data string) {
-	if err := SocketConn.WriteJSON(data); err != nil {
+func sendResponse(data StateResponse, conn *websocket.Conn) {
+	if err := conn.WriteJSON(data); err != nil {
 		log.Println(err)
 		return
 	}

@@ -18,13 +18,13 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 	timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-
 	client := &websocket.Client{
 		ID: timestamp,
 		Conn: conn,
 		Pool: pool,
 	}
 
+	trafficlight.CreateNewTrafficLight(timestamp, conn)
 	pool.Register <- client
 	client.Read()
 }
@@ -40,37 +40,6 @@ func setupRoutes() {
 
 func main() {
 	fmt.Println("Traffic Light App v0.1.0")
-	
-	trafficlight.CreateNewTrafficLight()
-
 	setupRoutes()
-	// Create End Point for Web Socket
-	// http.HandleFunc("/ws", websocket.WSEndPoint)
-
-	// Create HTTP server
 	log.Fatal(http.ListenAndServe(":8000", nil))
-
-	// if err != nil {
-	// 	log.Fatal(err)	// }
-	// ticker := time.NewTicker(1000 * time.Millisecond)
-	//
-	// go func() {
-	// 	for {
-	// 		select {
-	// 		case <-stop:
-	// 			ticker.Stop()
-	// 			mom.Stop()
-	// 			finished <- true
-	// 			return
-	// 		case <-ticker.C:
-	// 			fmt.Println("tick")
-	// 			mom.Tick()
-	// 		}
-
-	// 	}
-	// }()
-
-	// stop <- true
-	// <-finished
-	// fmt.Println("finished")
 }

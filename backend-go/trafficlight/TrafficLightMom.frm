@@ -3,6 +3,7 @@ package trafficlight
 
 import (
 	"github.com/frame-lang/frame-demos/persistenttrafficlight/framelang"
+	"github.com/gorilla/websocket"
 )
 ```
 
@@ -30,6 +31,7 @@ import (
     systemRestart
     log [msg:string]
     destroyTrafficLight
+    getConn:`*websocket.Conn`
 
     -machine-
 
@@ -38,6 +40,7 @@ import (
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
             -> "Traffic Light\nStarted" $Saving ^
+        |getConn|:`*websocket.Conn` @^ = conn ^
  
     $Saving 
         |>|
@@ -49,6 +52,7 @@ import (
         |tick| -> "Tick" $Working("tick") ^
         |systemError| -> "System Error" $Working("systemError") ^
         |systemRestart| -> "System Restart" $Working("systemRestart") ^
+        |getConn|:`*websocket.Conn` @^ = conn ^
         |<<| -> "Stop" $End ^
 
     $Working[trafficLightEvent:string color:string] => $TrafficLightApi
@@ -104,5 +108,6 @@ import (
 
     var trafficLight:TrafficLight = null
     var data:`[]byte` = null
+    var conn:`*websocket.Conn` = null
 
 ##
