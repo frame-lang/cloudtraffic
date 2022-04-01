@@ -9,11 +9,13 @@ import (
 func (c *Client) Read() {
     defer func() {
         c.Pool.Unregister <- c
-        c.Conn.Close()
+        connection := trafficlight.TrafficLights[c.ID].GetConnection()
+        connection.Close()
     }()
 
     for {
-        _, p, err := c.Conn.ReadMessage()
+        connection := trafficlight.TrafficLights[c.ID].GetConnection()
+        _, p, err := connection.ReadMessage()
         if err != nil {
             log.Println(err)
             return

@@ -39,7 +39,7 @@ type TrafficLightMom interface {
     SystemRestart() 
     Log(msg string) 
     DestroyTrafficLight() 
-    GetConn() *websocket.Conn
+    GetConnection() *websocket.Conn
 }
 
 type TrafficLightMom_actions interface {
@@ -66,10 +66,9 @@ type trafficLightMomStruct struct {
     _nextCompartment_ *TrafficLightMomCompartment
     trafficLight TrafficLight
     data []byte
-    // conn *websocket.Conn
+    connection *websocket.Conn
     clientId string
     stopper chan<- bool
-    connection *websocket.Conn
 }
 
 
@@ -84,9 +83,10 @@ func NewTrafficLightMom(clientId string, conn *websocket.Conn) TrafficLightMom {
     // Initialize domain
     m.trafficLight = nil
     m.data = nil
-    m.clientId = clientId
     m.connection = conn
-
+    m.clientId = clientId
+    m.stopper = nil
+    
     // Send system start event
     e := framelang.FrameEvent{Msg:">"}
     m._mux_(&e)
@@ -197,8 +197,8 @@ func (m *trafficLightMomStruct) DestroyTrafficLight()  {
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) GetConn() *websocket.Conn {
-    e := framelang.FrameEvent{Msg:"getConn"}
+func (m *trafficLightMomStruct) GetConnection() *websocket.Conn {
+    e := framelang.FrameEvent{Msg:"getConnection"}
     m._mux_(&e)
     return  e.Ret.(*websocket.Conn)
 }
@@ -251,8 +251,8 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_New_(e *framelang.FrameEve
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
         m._transition_(compartment)
         return
-    case "getConn":
-        e.Ret = nil
+    case "getConnection":
+        e.Ret = m.connection
         return
     }
     m._TrafficLightMomState_TrafficLightApi_(e)
@@ -298,8 +298,8 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Persisted_(e *framelang.Fr
         
         m._transition_(compartment)
         return
-    case "getConn":
-        e.Ret = nil
+    case "getConnection":
+        e.Ret = m.connection
         return
     case "<<":
         

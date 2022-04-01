@@ -64,9 +64,8 @@ import (
             -> $Red  ^
         |stop|
             -> $End ^
-        |getColor|:string
-            @^ = getColor() ^
-
+        |getColor|:string @^ = flashColor ^
+    
     $End
         |>|
             stopWorkingTimer()
@@ -79,8 +78,7 @@ import (
             -> $FlashingRed ^
         |changeColor|[color:string]
             flashColor = color ^
-        |getColor|:string
-            @^ = getColor() ^
+        |getColor|:string @^ = flashColor ^
 
     -actions-
 
@@ -97,7 +95,6 @@ import (
     startFlashing
     stopFlashing
     changeFlashingAnimation
-    getColor:string
     log [msg:string]
     destroyTrafficLight
 

@@ -31,7 +31,7 @@ import (
     systemRestart
     log [msg:string]
     destroyTrafficLight
-    getConn:`*websocket.Conn`
+    getConnection:`*websocket.Conn`
 
     -machine-
 
@@ -40,7 +40,7 @@ import (
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
             -> "Traffic Light\nStarted" $Saving ^
-        |getConn|:`*websocket.Conn` @^ = conn ^
+        |getConnection|:`*websocket.Conn` @^ = connection ^
  
     $Saving 
         |>|
@@ -52,7 +52,7 @@ import (
         |tick| -> "Tick" $Working("tick") ^
         |systemError| -> "System Error" $Working("systemError") ^
         |systemRestart| -> "System Restart" $Working("systemRestart") ^
-        |getConn|:`*websocket.Conn` @^ = conn ^
+        |getConnection|:`*websocket.Conn` @^ = connection ^
         |<<| -> "Stop" $End ^
 
     $Working[trafficLightEvent:string color:string] => $TrafficLightApi
@@ -108,6 +108,7 @@ import (
 
     var trafficLight:TrafficLight = null
     var data:`[]byte` = null
-    var conn:`*websocket.Conn` = null
-
+    var connection:`*websocket.Conn` = null
+    var clientId:string = null
+    var stopper:`chan<- bool` = null
 ##

@@ -1,9 +1,5 @@
 package websocket
 
-import(
-    "github.com/gorilla/websocket"
-)
-
 type Response struct {
     Type string    `json:"type"`
     Message string `json:"message"`
@@ -19,6 +15,5 @@ type Pool struct {
 
 type Client struct {
     ID   string
-    Conn *websocket.Conn
     Pool *Pool
 }

@@ -66,10 +66,6 @@ func (m *trafficLightStruct) changeFlashingAnimation() {
 	m.mom.ChangeFlashingAnimation()
 }
 
-func (m *trafficLightStruct) getColor() string {
-	return m.flashColor
-}
-
 func (m *trafficLightStruct) log(msg string) {}
 
 func (m *trafficLightMomStruct) initTrafficLight() {

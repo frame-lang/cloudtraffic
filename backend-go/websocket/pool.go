@@ -1,6 +1,10 @@
 package websocket
 
-import "fmt"
+import (
+    "fmt"
+
+    "github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
+)
 
 func NewPool() *Pool {
     return &Pool{
@@ -19,7 +23,8 @@ func (pool *Pool) Start() {
                 fmt.Println("Size of Connection Pool: ", len(pool.Clients))
                 for client, _ := range pool.Clients {
                     fmt.Println("Client ->", client)
-                    client.Conn.WriteJSON(Response{
+                    connection := trafficlight.TrafficLights[client.ID].GetConnection()
+                    connection.WriteJSON(Response{
                         Type: "addedInPool",
                         Message: client.ID,
                         ConnectedUsers: len(pool.Clients),
@@ -30,13 +35,17 @@ func (pool *Pool) Start() {
                 delete(pool.Clients, client)
                 fmt.Println("Size of Connection Pool: ", len(pool.Clients))
                 for client, _ := range pool.Clients {
-                    client.Conn.WriteJSON(Response{
+                    connection := trafficlight.TrafficLights[client.ID].GetConnection()
+                    connection.WriteJSON(Response{
                         Type: "removedFromPool",
                         Message: client.ID,
                         ConnectedUsers: len(pool.Clients),
                     })
                 }
                 break
+
+            // No Broadcast functionality use currently
+
             // case message := <-pool.Broadcast:
             //     fmt.Println("Sending message to all clients in Pool")
             //     for client, _ := range pool.Clients {

@@ -49,7 +49,6 @@ type TrafficLight_actions interface {
     startFlashing() 
     stopFlashing() 
     changeFlashingAnimation() 
-    getColor() string
     log(msg string) 
     destroyTrafficLight() 
 }
@@ -79,6 +78,9 @@ func NewTrafficLight(mom TrafficLightMom ) TrafficLight {
     // Initialize domain
     m.flashColor = ""
     
+    // Send system start event
+    e := framelang.FrameEvent{Msg:">"}
+    m._mux_(&e)
     return m
 }
 
@@ -183,10 +185,21 @@ func (m *trafficLightStruct) _mux_(e *framelang.FrameEvent) {
         m._TrafficLightState_Working_(e)
     }
     
-    for m._nextCompartment_ != nil {
+    if m._nextCompartment_ != nil {
         nextCompartment := m._nextCompartment_
         m._nextCompartment_ = nil
-        m._do_transition_(nextCompartment)
+        if nextCompartment._forwardEvent_ != nil && 
+           nextCompartment._forwardEvent_.Msg == ">" {
+            m._mux_(&framelang.FrameEvent{Msg: "<", Params: m._compartment_.GetExitArgs(), Ret: nil})
+            m._compartment_ = nextCompartment
+            m._mux_(nextCompartment._forwardEvent_)
+        } else {
+            m._do_transition_(nextCompartment)
+            if nextCompartment._forwardEvent_ != nil {
+                m._mux_(nextCompartment._forwardEvent_)
+            }
+        }
+        nextCompartment._forwardEvent_ = nil
     }
 }
 
@@ -197,6 +210,7 @@ func (m *trafficLightStruct) _TrafficLightState_Begin_(e *framelang.FrameEvent) 
     case ">>":
         m.initTrafficLight()
         m.startWorkingTimer()
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_Red)
         m._transition_(compartment)
         return
@@ -209,6 +223,7 @@ func (m *trafficLightStruct) _TrafficLightState_Red_(e *framelang.FrameEvent) {
         m.enterRed()
         return
     case "tick":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_Green)
         m._transition_(compartment)
         return
@@ -223,6 +238,7 @@ func (m *trafficLightStruct) _TrafficLightState_Green_(e *framelang.FrameEvent) 
         m.enterGreen()
         return
     case "tick":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_Yellow)
         m._transition_(compartment)
         return
@@ -237,6 +253,7 @@ func (m *trafficLightStruct) _TrafficLightState_Yellow_(e *framelang.FrameEvent)
         m.enterYellow()
         return
     case "tick":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_Red)
         m._transition_(compartment)
         return
@@ -264,15 +281,17 @@ func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *framelang.FrameE
         m.flashColor = e.Params["color"].(string)
         return
     case "systemRestart":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_Red)
         m._transition_(compartment)
         return
     case "stop":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_End)
         m._transition_(compartment)
         return
     case "getColor":
-        e.Ret = m.getColor()
+        e.Ret = m.flashColor
         return
     }
 }
@@ -289,10 +308,12 @@ func (m *trafficLightStruct) _TrafficLightState_End_(e *framelang.FrameEvent) {
 func (m *trafficLightStruct) _TrafficLightState_Working_(e *framelang.FrameEvent) {
     switch e.Msg {
     case "stop":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_End)
         m._transition_(compartment)
         return
     case "systemError":
+        
         compartment := NewTrafficLightCompartment(TrafficLightState_FlashingRed)
         m._transition_(compartment)
         return
@@ -300,7 +321,7 @@ func (m *trafficLightStruct) _TrafficLightState_Working_(e *framelang.FrameEvent
         m.flashColor = e.Params["color"].(string)
         return
     case "getColor":
-        e.Ret = m.getColor()
+        e.Ret = m.flashColor
         return
     }
 }
@@ -334,7 +355,6 @@ func (m *trafficLightStruct) stopFlashingTimer()  {}
 func (m *trafficLightStruct) startFlashing()  {}
 func (m *trafficLightStruct) stopFlashing()  {}
 func (m *trafficLightStruct) changeFlashingAnimation()  {}
-func (m *trafficLightStruct) getColor() string {}
 func (m *trafficLightStruct) log(msg string)  {}
 func (m *trafficLightStruct) destroyTrafficLight()  {}
 ********************/
@@ -347,6 +367,7 @@ type TrafficLightCompartment struct {
     StateVars map[string]interface{}
     EnterArgs map[string]interface{}
     ExitArgs map[string]interface{}
+    _forwardEvent_ *framelang.FrameEvent
 }
 
 func NewTrafficLightCompartment(state TrafficLightState) *TrafficLightCompartment {

@@ -20,7 +20,7 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	client := &websocket.Client{
 		ID: timestamp,
-		Conn: conn,
+		// Conn: conn,
 		Pool: pool,
 	}
 
