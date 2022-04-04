@@ -7,12 +7,12 @@ import (
 )
 ```
 
-#TrafficLightMom
+#TrafficLightMom[clntId: string conn: `*websocket.Conn`]
 
     -interface-
 
     start @(|>>|)
-    stop @(|<<|)
+    stop
     initTrafficLight
     tick    
     enterRed
@@ -36,7 +36,8 @@ import (
     -machine-
 
     $New => $TrafficLightApi
-        |>>| 
+        |>>|
+
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
             -> "Traffic Light\nStarted" $Saving ^
@@ -49,19 +50,17 @@ import (
             -> "Saved" $Persisted ^
 
     $Persisted 
-        |tick| -> "Tick" $Working("tick") ^
-        |systemError| -> "System Error" $Working("systemError") ^
-        |systemRestart| -> "System Restart" $Working("systemRestart") ^
+        |tick| -> "Tick"  =>  $Working ^
+        |systemError| -> "System Error" =>  $Working ^
+        |systemRestart| -> "System Error" =>  $Working ^
         |getConnection|:`*websocket.Conn` @^ = connection ^
-        |<<| -> "Stop" $End ^
+        |stop| -> "Stop" $End ^
 
-    $Working[trafficLightEvent:string color:string] => $TrafficLightApi
-        |>|
-            trafficLight = LoadTrafficLight(# data)
-            trafficLightEvent ?~
-                /tick/ trafficLight.Tick() -> "Done" $Saving :>
-                /systemError/ trafficLight.SystemError() -> "Done" $Saving :>
-                /systemRestart/ trafficLight.SystemRestart() -> "Done" $Saving :: ^
+    $Working => $TrafficLightApi
+        |>| trafficLight = LoadTrafficLight(# data)  ^
+        |tick| trafficLight.Tick() -> "Done" $Saving ^
+        |systemError| trafficLight.SystemError() -> "Done" $Saving ^
+        |systemRestart| trafficLight.SystemRestart() -> "Done" $Saving ^
 
     $TrafficLightApi
         |initTrafficLight| initTrafficLight() ^
@@ -108,7 +107,7 @@ import (
 
     var trafficLight:TrafficLight = null
     var data:`[]byte` = null
-    var connection:`*websocket.Conn` = null
-    var clientId:string = null
+    var connection:`*websocket.Conn` = conn
+    var clientId:string = clntId
     var stopper:`chan<- bool` = null
 ##

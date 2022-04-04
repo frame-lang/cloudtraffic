@@ -72,7 +72,7 @@ type trafficLightMomStruct struct {
 }
 
 
-func NewTrafficLightMom(clientId string, conn *websocket.Conn) TrafficLightMom {
+func NewTrafficLightMom(clntId string,conn *websocket.Conn) TrafficLightMom {
     m := &trafficLightMomStruct{}
     
     // Validate interfaces
@@ -84,11 +84,14 @@ func NewTrafficLightMom(clientId string, conn *websocket.Conn) TrafficLightMom {
     m.trafficLight = nil
     m.data = nil
     m.connection = conn
-    m.clientId = clientId
+    m.clientId = clntId
     m.stopper = nil
     
     // Send system start event
-    e := framelang.FrameEvent{Msg:">"}
+    params := make(map[string]interface{})
+    params["clntId"] = clntId
+    params["conn"] = conn
+    e := framelang.FrameEvent{Msg:">", Params:params}
     m._mux_(&e)
     return m
 }
@@ -101,7 +104,7 @@ func (m *trafficLightMomStruct) Start()  {
 }
 
 func (m *trafficLightMomStruct) Stop()  {
-    e := framelang.FrameEvent{Msg:"<<"}
+    e := framelang.FrameEvent{Msg:"stop"}
     m._mux_(&e)
 }
 
@@ -278,30 +281,27 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Persisted_(e *framelang.Fr
         
         // Tick
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Working)
-        compartment.AddStateArg("trafficLightEvent","tick")
-        
+        compartment._forwardEvent_ = e
         m._transition_(compartment)
         return
     case "systemError":
         
         // System Error
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Working)
-        compartment.AddStateArg("trafficLightEvent","systemError")
-        
+        compartment._forwardEvent_ = e
         m._transition_(compartment)
         return
     case "systemRestart":
         
-        // System Restart
+        // System Error
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Working)
-        compartment.AddStateArg("trafficLightEvent","systemRestart")
-        
+        compartment._forwardEvent_ = e
         m._transition_(compartment)
         return
     case "getConnection":
         e.Ret = m.connection
         return
-    case "<<":
+    case "stop":
         
         // Stop
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_End)
@@ -314,25 +314,27 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Working_(e *framelang.Fram
     switch e.Msg {
     case ">":
         m.trafficLight = LoadTrafficLight(m,m.data)
-        if (m._compartment_.GetStateArg("trafficLightEvent").(string)) == "tick" {
-            m.trafficLight.Tick()
-            
-            // Done
-            compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
-            m._transition_(compartment)
-        } else if (m._compartment_.GetStateArg("trafficLightEvent").(string)) == "systemError" {
-            m.trafficLight.SystemError()
-            
-            // Done
-            compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
-            m._transition_(compartment)
-        } else if (m._compartment_.GetStateArg("trafficLightEvent").(string)) == "systemRestart" {
-            m.trafficLight.SystemRestart()
-            
-            // Done
-            compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
-            m._transition_(compartment)
-        }
+        return
+    case "tick":
+        m.trafficLight.Tick()
+        
+        // Done
+        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
+        m._transition_(compartment)
+        return
+    case "systemError":
+        m.trafficLight.SystemError()
+        
+        // Done
+        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
+        m._transition_(compartment)
+        return
+    case "systemRestart":
+        m.trafficLight.SystemRestart()
+        
+        // Done
+        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Saving)
+        m._transition_(compartment)
         return
     }
     m._TrafficLightMomState_TrafficLightApi_(e)
