@@ -46,7 +46,8 @@ import (
     $Saving 
         |>|
             data = trafficLight.Marshal() 
-            trafficLight = nil 
+            trafficLight = nil
+            persistData()
             -> "Saved" $Persisted ^
 
     $Persisted 
@@ -102,6 +103,7 @@ import (
     changeFlashingAnimation
     log [msg:string]
     destroyTrafficLight
+    persistData
 
     -domain-
 

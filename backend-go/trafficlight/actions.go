@@ -2,7 +2,11 @@ package trafficlight
 
 import (
 	"time"
+	"encoding/json"
+	"os"
+	"log"
 )
+var persistedData = make(map[string]marshalStruct)
 
 func (m *trafficLightStruct) initTrafficLight() {
 	m.mom.InitTrafficLight()
@@ -79,6 +83,30 @@ func (m *trafficLightMomStruct) destroyTrafficLight() {
 	sendResponse(res, m.connection)
 }
 
+func (m *trafficLightMomStruct) persistData()  {
+	var marshal marshalStruct
+	err := json.Unmarshal(m.data, &marshal)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	persistedData[m.clientId] = marshal
+	jsonData, err := json.Marshal(persistedData)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jsonFile, err := os.Create("./Traffic-Light-Data.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer jsonFile.Close()
+
+	jsonFile.Write(jsonData)
+	jsonFile.Close()
+}
+
+
 func (m *trafficLightMomStruct) enterRed() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("working", color, false)
@@ -108,7 +136,7 @@ func (m *trafficLightMomStruct) exitFlashingRed() {
 
 func (m *trafficLightMomStruct) startWorkingTimer() {
 	mom:= TrafficLights[m.clientId]
-	m.stopper = SetInterval(mom.Tick, 2*time.Second)
+	m.stopper = setInterval(mom.Tick, 2*time.Second)
 }
 
 func (m *trafficLightMomStruct) stopWorkingTimer() {
@@ -117,7 +145,7 @@ func (m *trafficLightMomStruct) stopWorkingTimer() {
 
 func (m *trafficLightMomStruct) startFlashingTimer() {
 	mom:= TrafficLights[m.clientId]
-	m.stopper = SetInterval(mom.Tick, 1*time.Second)
+	m.stopper = setInterval(mom.Tick, 1*time.Second)
 }
 
 func (m *trafficLightMomStruct) stopFlashingTimer() {

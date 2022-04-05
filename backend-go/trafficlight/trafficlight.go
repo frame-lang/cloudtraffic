@@ -35,7 +35,7 @@ func sendResponse(data StateResponse, conn *websocket.Conn) {
 	}
 }
 
-func SetInterval(p interface{}, interval time.Duration) chan<- bool {
+func setInterval(p interface{}, interval time.Duration) chan<- bool {
 	ticker := time.NewTicker(interval)
 	stopIt := make(chan bool)
 	go func() {

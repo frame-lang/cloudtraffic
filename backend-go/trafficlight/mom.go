@@ -58,6 +58,7 @@ type TrafficLightMom_actions interface {
     changeFlashingAnimation() 
     log(msg string) 
     destroyTrafficLight() 
+    persistData() 
 }
 
 
@@ -267,6 +268,7 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Saving_(e *framelang.Frame
     case ">":
         m.data = m.trafficLight.Marshal()
         m.trafficLight = nil
+        m.persistData()
         
         // Saved
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Persisted)
@@ -436,6 +438,7 @@ func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
 func (m *trafficLightMomStruct) log(msg string)  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
+func (m *trafficLightMomStruct) persistData()  {}
 ********************/
 
 //=============== Compartment ==============//
