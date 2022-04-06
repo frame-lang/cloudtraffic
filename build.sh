@@ -37,6 +37,7 @@ else
     Type=simple
     Restart=always
     RestartSec=5s
+    WorkingDirectory=$DIR/backend-go/
     ExecStart=$DIR/backend-go/persistenttrafficlight
     [Install]
     WantedBy=multi-user.target" | sudo tee -a $SERVICEFILE > /dev/null
