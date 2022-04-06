@@ -4,7 +4,9 @@ DIR="$HOME/cloudtraffic"
 cd $HOME
 if [ -d "$DIR" ]; then
     cd $DIR
+    git stash save
     git pull https://github.com/frame-lang/cloudtraffic.git
+    git stash pop
 
 else
 
