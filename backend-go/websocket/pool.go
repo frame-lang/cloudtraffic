@@ -2,6 +2,8 @@ package websocket
 
 import (
     "fmt"
+    "os"
+    "log"
 
     "github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
 )
@@ -20,9 +22,8 @@ func (pool *Pool) Start() {
         select {
             case client := <-pool.Register:
                 pool.Clients[client] = true
-                fmt.Println("Size of Connection Pool: ", len(pool.Clients))
+                fmt.Println("Client registered, Size of Connection Pool: ", len(pool.Clients))
                 for client, _ := range pool.Clients {
-                    fmt.Println("Client ->", client)
                     connection := trafficlight.TrafficLights[client.ID].GetConnection()
                     connection.WriteJSON(Response{
                         Type: "addedInPool",
@@ -32,13 +33,21 @@ func (pool *Pool) Start() {
                 }
                 break
             case client := <-pool.Unregister:
-                delete(pool.Clients, client)
-                fmt.Println("Size of Connection Pool: ", len(pool.Clients))
-                for client, _ := range pool.Clients {
-                    connection := trafficlight.TrafficLights[client.ID].GetConnection()
+                fmt.Println("Client unregistered, Size of Connection Pool: ", len(pool.Clients))
+                for singleClient, _ := range pool.Clients {
+                    if client.ID == singleClient.ID {
+                        trafficlight.TrafficLights[singleClient.ID].Stop()
+                        fileName := trafficlight.GetFileName(client.ID)
+                        err := os.Remove(fileName)
+                        if err != nil {
+                            log.Fatal(err)
+                        }
+                        delete(pool.Clients, client)
+                    }
+                    connection := trafficlight.TrafficLights[singleClient.ID].GetConnection()
                     connection.WriteJSON(Response{
                         Type: "removedFromPool",
-                        Message: client.ID,
+                        Message: singleClient.ID,
                         ConnectedUsers: len(pool.Clients),
                     })
                 }

@@ -68,6 +68,7 @@ import (
     
     $End
         |>|
+            flashColor = ""
             stopWorkingTimer()
             destroyTrafficLight() ^
 

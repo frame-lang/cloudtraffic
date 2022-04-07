@@ -1,12 +1,10 @@
 package trafficlight
 
 import (
-	"time"
-	"encoding/json"
-	"os"
 	"log"
+	"os"
+	"time"
 )
-var persistedData = make(map[string]marshalStruct)
 
 func (m *trafficLightStruct) initTrafficLight() {
 	m.mom.InitTrafficLight()
@@ -84,25 +82,14 @@ func (m *trafficLightMomStruct) destroyTrafficLight() {
 }
 
 func (m *trafficLightMomStruct) persistData()  {
-	var marshal marshalStruct
-	err := json.Unmarshal(m.data, &marshal)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	persistedData[m.clientId] = marshal
-	jsonData, err := json.Marshal(persistedData)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonFile, err := os.Create("./Traffic-Light-Data.json")
+	fileName := GetFileName(m.clientId)
+	jsonFile, err := os.Create(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer jsonFile.Close()
 
-	jsonFile.Write(jsonData)
+	jsonFile.Write(m.data)
 	jsonFile.Close()
 }
 

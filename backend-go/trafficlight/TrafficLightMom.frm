@@ -84,6 +84,9 @@ import (
         |>|
             trafficLight = LoadTrafficLight(# data) 
             trafficLight.Stop()
+            data = trafficLight.Marshal() 
+            trafficLight = nil
+            persistData()
             -> $New ^
 
     -actions-

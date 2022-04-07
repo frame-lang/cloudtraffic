@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
 	"github.com/frame-lang/frame-demos/persistenttrafficlight/websocket"
@@ -20,7 +20,6 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	client := &websocket.Client{
 		ID: timestamp,
-		// Conn: conn,
 		Pool: pool,
 	}
 
@@ -40,6 +39,13 @@ func setupRoutes() {
 
 func main() {
 	fmt.Println("Traffic Light App v0.1.0")
+
+	// Create a directory to store saved data (only if not exists currently)
+	trafficlight.CreateDataDirIfNotExists()
+
+	// If any data available (any file exists), remove all those
+	trafficlight.RemoveContents("../data")
+
 	setupRoutes()
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

@@ -299,6 +299,7 @@ func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *framelang.FrameE
 func (m *trafficLightStruct) _TrafficLightState_End_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
+        m.flashColor = ""
         m.stopWorkingTimer()
         m.destroyTrafficLight()
         return

@@ -398,6 +398,9 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_End_(e *framelang.FrameEve
     case ">":
         m.trafficLight = LoadTrafficLight(m,m.data)
         m.trafficLight.Stop()
+        m.data = m.trafficLight.Marshal()
+        m.trafficLight = nil
+        m.persistData()
         
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_New)
         m._transition_(compartment)

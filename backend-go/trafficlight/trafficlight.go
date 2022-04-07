@@ -2,6 +2,8 @@ package trafficlight
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 	"time"
 
@@ -53,4 +55,41 @@ func setInterval(p interface{}, interval time.Duration) chan<- bool {
 
 	// return the bool channel to use it as a stopper
 	return stopIt
+}
+
+func RemoveContents(dir string) error {
+    d, err := os.Open(dir)
+    if err != nil {
+        return err
+    }
+    defer d.Close()
+    names, err := d.Readdirnames(-1)
+    if err != nil {
+        return err
+    }
+    for _, name := range names {
+        err = os.RemoveAll(filepath.Join(dir, name))
+        if err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+func CreateDataDirIfNotExists () {
+	if _, err := os.Stat(DataDirPath()); os.IsNotExist(err) {
+		err := os.Mkdir(DataDirPath(), 0755)
+
+		if (err != nil) {
+			log.Fatal("Unable tocreate Data directory")
+		}
+	}
+}
+
+func DataDirPath () string {
+	return filepath.Join("../", "data")
+}
+
+func GetFileName (name string) string {
+	return filepath.Join("../", "data", name + ".json")
 }
