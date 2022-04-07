@@ -5,7 +5,6 @@ cd $HOME
 if [ -d "$DIR" ]; then
     cd $DIR
     git pull https://github.com/frame-lang/cloudtraffic.git
-
 else
 
     git clone https://github.com/frame-lang/cloudtraffic.git
@@ -37,6 +36,7 @@ else
     Type=simple
     Restart=always
     RestartSec=5s
+    WorkingDirectory=$DIR/backend-go/
     ExecStart=$DIR/backend-go/persistenttrafficlight
     [Install]
     WantedBy=multi-user.target" | sudo tee -a $SERVICEFILE > /dev/null
