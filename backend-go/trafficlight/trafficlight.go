@@ -76,7 +76,7 @@ func RemoveContents(dir string) error {
     return nil
 }
 
-func CreateDataDirIfNotExists () {
+func CreateDataDirIfNotExists() {
 	if _, err := os.Stat(DataDirPath()); os.IsNotExist(err) {
 		err := os.Mkdir(DataDirPath(), 0755)
 
@@ -86,10 +86,10 @@ func CreateDataDirIfNotExists () {
 	}
 }
 
-func DataDirPath () string {
+func DataDirPath() string {
 	return filepath.Join("../", "data")
 }
 
-func GetFileName (name string) string {
+func GetFileName(name string) string {
 	return filepath.Join("../", "data", name + ".json")
 }
