@@ -1,6 +1,6 @@
 # cloudtraffic
 
-## Perquisites
+## Prerequisites
 1. Clone the project   
 ```git clone https://github.com/frame-lang/cloudtraffic.git```
 2. [Golang](https://go.dev/doc/install)
@@ -8,6 +8,12 @@
 4. [Nginx](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
 
 ## Deployment
+### Build with script
+
+```sh
+curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/build.sh | sh
+```
+### Manually Deploy
 
 1. Create Compute Engine on GCP   
 1.1 Select perferred machine configuration.   
@@ -28,13 +34,14 @@
     Type=simple
     Restart=always
     RestartSec=5s
-    ExecStart=/home/gauravsaxena_ongraph/backend-go/persistenttrafficlight
+    WorkingDirectory=$HOME/cloudtraffic/backend-go/ #provide your path of working directory
+    ExecStart=$DIR/backend-go/persistenttrafficlight #provide build binary path 
     [Install]
     WantedBy=multi-user.target
     ```   
     4.3 Start the service   
     ```sudo service trafficlightbackend start```   
-5. Build frontend    
+1. Build frontend    
 5.1 Install dependencies && make build     
 ```sudo npm install && sudo npm run build```  
 5.2 Point nginx to frontend build     
