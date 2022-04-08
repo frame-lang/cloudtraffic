@@ -1,7 +1,7 @@
 const DEFAULT_COLOR = {
-   red: '#FFCACA',
-   yellow: '#FDFFB1',
-   green: '#CDFFCD'
+   red: '#000000',
+   yellow: '#000000',
+   green: '#000000'
 };
 
 export const BEGIN_STATE = {
@@ -20,24 +20,24 @@ export const WORKING_STATE = {
       umlImgName: 'red',
       color: {
          red: '#cc3232',
-         yellow: '#FDFFB1',
-         green: '#CDFFCD'
+         yellow: '#000000',
+         green: '#000000'
       }
    },
    green: {
       umlImgName: 'green',
       color: {
-         red: '#FFCACA',
-         yellow: '#FDFFB1',
+         red: '#000000',
+         yellow: '#000000',
          green: '#2dc937'
       }
    },
    yellow: {
       umlImgName: 'yellow',
       color: {
-         red: '#FFCACA',
+         red: '#000000',
          yellow: '#e7b416',
-         green: '#CDFFCD'
+         green: '#000000'
       }
    }
 };
@@ -51,8 +51,8 @@ export const SYSTEM_ERROR_STATE = {
       umlImgName: 'flashingRed',
       color: {
          red: '#cc3232',
-         yellow: '#FDFFB1',
-         green: '#CDFFCD'
+         yellow: '#000000',
+         green: '#000000'
       }
    }
 };

@@ -37,7 +37,6 @@ import (
 
     $New => $TrafficLightApi
         |>>|
-
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
             -> "Traffic Light\nStarted" $Saving ^
