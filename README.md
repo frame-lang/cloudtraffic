@@ -1,6 +1,6 @@
 # cloudtraffic
 
-## Prequisites
+## Prerequisites
 1. Clone the project   
 ```git clone https://github.com/frame-lang/cloudtraffic.git```
 2. [Golang](https://go.dev/doc/install)
