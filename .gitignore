@@ -1,11 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-/frontend-react/node_modules
-/frontend-react/build
+**/node_modules
+**/build
 
-/backend-go/persistenttrafficlight
+**/persistenttrafficlight
 
-/data/
+**/data/
 
 npm-debug.log*
 yarn-debug.log*
