@@ -58,8 +58,8 @@ type TrafficLightMom_actions interface {
     changeFlashingAnimation() 
     log(msg string) 
     destroyTrafficLight() 
-    persistData(data []byte) 
-    loadPersistedData(mom TrafficLightMom,clientId string) TrafficLight
+    saveInDisk(data []byte) 
+    loadFromDisk(clientId string) []byte
 }
 
 
@@ -265,8 +265,8 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_New_(e *framelang.FrameEve
 func (m *trafficLightMomStruct) _TrafficLightMomState_Saving_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        var data  = m.trafficLight.Marshal()
-        m.persistData(data)
+        var jsonData  = m.trafficLight.Marshal()
+        m.saveInDisk(jsonData)
         m.trafficLight = nil
         
         // Saved
@@ -314,7 +314,8 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Persisted_(e *framelang.Fr
 func (m *trafficLightMomStruct) _TrafficLightMomState_Working_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        m.trafficLight = m.loadPersistedData(m,m.clientId)
+        var savedData  = m.loadFromDisk(m.clientId)
+        m.trafficLight = LoadTrafficLight(m,savedData)
         return
     case "tick":
         m.trafficLight.Tick()
@@ -395,10 +396,11 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *framel
 func (m *trafficLightMomStruct) _TrafficLightMomState_End_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        m.trafficLight = m.loadPersistedData(m,m.clientId)
+        var savedData  = m.loadFromDisk(m.clientId)
+        m.trafficLight = LoadTrafficLight(m,savedData)
         m.trafficLight.Stop()
-        var data  = m.trafficLight.Marshal()
-        m.persistData(data)
+        var jsonData  = m.trafficLight.Marshal()
+        m.saveInDisk(jsonData)
         m.trafficLight = nil
         
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_New)
@@ -440,8 +442,8 @@ func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
 func (m *trafficLightMomStruct) log(msg string)  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
-func (m *trafficLightMomStruct) persistData(data []byte)  {}
-func (m *trafficLightMomStruct) loadPersistedData(mom TrafficLightMom,clientId string) TrafficLight {}
+func (m *trafficLightMomStruct) saveInDisk(data []byte)  {}
+func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {}
 ********************/
 
 //=============== Compartment ==============//

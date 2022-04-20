@@ -44,8 +44,8 @@ import (
  
     $Saving 
         |>|
-            var data = trafficLight.Marshal() 
-            persistData(data)
+            var jsonData = trafficLight.Marshal() 
+            saveInDisk(jsonData)
             trafficLight = nil
             -> "Saved" $Persisted ^
 
@@ -57,7 +57,9 @@ import (
         |stop| -> "Stop" $End ^
 
     $Working => $TrafficLightApi
-        |>| trafficLight = loadPersistedData(# clientId)  ^
+        |>|
+            var savedData = loadFromDisk(#.clientId)
+            trafficLight = LoadTrafficLight(# savedData) ^
         |tick| trafficLight.Tick() -> "Done" $Saving ^
         |systemError| trafficLight.SystemError() -> "Done" $Saving ^
         |systemRestart| trafficLight.SystemRestart() -> "Done" $Saving ^
@@ -81,10 +83,11 @@ import (
 
     $End => $TrafficLightApi
         |>|
-            trafficLight = loadPersistedData(# clientId) 
+            var savedData = loadFromDisk(#.clientId)
+            trafficLight = LoadTrafficLight(# savedData)
             trafficLight.Stop()
-            var data = trafficLight.Marshal() 
-            persistData(data)
+            var jsonData = trafficLight.Marshal() 
+            saveInDisk(jsonData)
             trafficLight = nil
             -> $New ^
 
@@ -105,8 +108,8 @@ import (
     changeFlashingAnimation
     log [msg:string]
     destroyTrafficLight
-    persistData [data:`[]byte`]
-    loadPersistedData [mom: TrafficLightMom clientId: string]: TrafficLight
+    saveInDisk [data:`[]byte`]
+    loadFromDisk [clientId: string]: `[]byte`
 
     -domain-
 
