@@ -44,9 +44,9 @@ import (
  
     $Saving 
         |>|
-            data = trafficLight.Marshal() 
+            var data = trafficLight.Marshal() 
+            persistData(data)
             trafficLight = nil
-            persistData()
             -> "Saved" $Persisted ^
 
     $Persisted 
@@ -57,7 +57,7 @@ import (
         |stop| -> "Stop" $End ^
 
     $Working => $TrafficLightApi
-        |>| trafficLight = LoadTrafficLight(# data)  ^
+        |>| trafficLight = loadPersistedData(# clientId)  ^
         |tick| trafficLight.Tick() -> "Done" $Saving ^
         |systemError| trafficLight.SystemError() -> "Done" $Saving ^
         |systemRestart| trafficLight.SystemRestart() -> "Done" $Saving ^
@@ -81,11 +81,11 @@ import (
 
     $End => $TrafficLightApi
         |>|
-            trafficLight = LoadTrafficLight(# data) 
+            trafficLight = loadPersistedData(# clientId) 
             trafficLight.Stop()
-            data = trafficLight.Marshal() 
+            var data = trafficLight.Marshal() 
+            persistData(data)
             trafficLight = nil
-            persistData()
             -> $New ^
 
     -actions-
@@ -105,12 +105,12 @@ import (
     changeFlashingAnimation
     log [msg:string]
     destroyTrafficLight
-    persistData
+    persistData [data:`[]byte`]
+    loadPersistedData [mom: TrafficLightMom clientId: string]: TrafficLight
 
     -domain-
 
     var trafficLight:TrafficLight = null
-    var data:`[]byte` = null
     var connection:`*websocket.Conn` = conn
     var clientId:string = clntId
     var stopper:`chan<- bool` = null

@@ -1,6 +1,7 @@
 package trafficlight
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -81,7 +82,7 @@ func (m *trafficLightMomStruct) destroyTrafficLight() {
 	sendResponse(res, m.connection)
 }
 
-func (m *trafficLightMomStruct) persistData()  {
+func (m *trafficLightMomStruct) persistData(data []byte)  {
 	fileName := GetFileName(m.clientId)
 	jsonFile, err := os.Create(fileName)
 	if err != nil {
@@ -89,7 +90,7 @@ func (m *trafficLightMomStruct) persistData()  {
 	}
 	defer jsonFile.Close()
 
-	jsonFile.Write(m.data)
+	jsonFile.Write(data)
 	jsonFile.Close()
 }
 
@@ -149,3 +150,30 @@ func (m *trafficLightMomStruct) changeFlashingAnimation() {
 }
 
 func (m *trafficLightMomStruct) log(msg string) {}
+
+func (m *trafficLightMomStruct) loadPersistedData(mom TrafficLightMom, clientId string) TrafficLight {
+	tl := &trafficLightStruct{}
+	tl.mom = mom
+	// Validate interfaces
+	var _ TrafficLight = tl
+	var _ TrafficLight_actions = tl
+	// Unmarshal
+	var marshal marshalStruct
+
+	fileName := GetFileName(clientId)
+	savedData, err1 := os.ReadFile(fileName)
+	if err1 != nil {
+		panic(err1)
+	}
+	err := json.Unmarshal(savedData, &marshal)
+	if err != nil {
+		return nil
+	}
+
+	// Initialize machine
+	tl._compartment_ = &marshal.TrafficLightCompartment
+
+	tl.flashColor = marshal.FlashColor
+
+	return tl
+}

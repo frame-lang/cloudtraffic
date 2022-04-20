@@ -58,7 +58,8 @@ type TrafficLightMom_actions interface {
     changeFlashingAnimation() 
     log(msg string) 
     destroyTrafficLight() 
-    persistData() 
+    persistData(data []byte) 
+    loadPersistedData(mom TrafficLightMom,clientId string) TrafficLight
 }
 
 
@@ -66,7 +67,6 @@ type trafficLightMomStruct struct {
     _compartment_ *TrafficLightMomCompartment
     _nextCompartment_ *TrafficLightMomCompartment
     trafficLight TrafficLight
-    data []byte
     connection *websocket.Conn
     clientId string
     stopper chan<- bool
@@ -83,7 +83,6 @@ func NewTrafficLightMom(clntId string,conn *websocket.Conn) TrafficLightMom {
     
     // Initialize domain
     m.trafficLight = nil
-    m.data = nil
     m.connection = conn
     m.clientId = clntId
     m.stopper = nil
@@ -266,9 +265,9 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_New_(e *framelang.FrameEve
 func (m *trafficLightMomStruct) _TrafficLightMomState_Saving_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        m.data = m.trafficLight.Marshal()
+        var data  = m.trafficLight.Marshal()
+        m.persistData(data)
         m.trafficLight = nil
-        m.persistData()
         
         // Saved
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Persisted)
@@ -315,7 +314,7 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Persisted_(e *framelang.Fr
 func (m *trafficLightMomStruct) _TrafficLightMomState_Working_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        m.trafficLight = LoadTrafficLight(m,m.data)
+        m.trafficLight = m.loadPersistedData(m,m.clientId)
         return
     case "tick":
         m.trafficLight.Tick()
@@ -396,11 +395,11 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *framel
 func (m *trafficLightMomStruct) _TrafficLightMomState_End_(e *framelang.FrameEvent) {
     switch e.Msg {
     case ">":
-        m.trafficLight = LoadTrafficLight(m,m.data)
+        m.trafficLight = m.loadPersistedData(m,m.clientId)
         m.trafficLight.Stop()
-        m.data = m.trafficLight.Marshal()
+        var data  = m.trafficLight.Marshal()
+        m.persistData(data)
         m.trafficLight = nil
-        m.persistData()
         
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_New)
         m._transition_(compartment)
@@ -441,7 +440,8 @@ func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
 func (m *trafficLightMomStruct) log(msg string)  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
-func (m *trafficLightMomStruct) persistData()  {}
+func (m *trafficLightMomStruct) persistData(data []byte)  {}
+func (m *trafficLightMomStruct) loadPersistedData(mom TrafficLightMom,clientId string) TrafficLight {}
 ********************/
 
 //=============== Compartment ==============//
