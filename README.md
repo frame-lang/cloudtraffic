@@ -11,7 +11,7 @@
 ### Build with script
 
 ```sh
-curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/build.sh | sh
+curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/cloudtraffic_v1/build.sh | sh
 ```
 ### Manually Deploy
 
@@ -19,7 +19,7 @@ curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/build.s
 1.1 Select perferred machine configuration.   
 1.2 Create a firewall rule for backend service PORT(Currently, it is 8000). [Docs](https://cloud.google.com/vpc/docs/firewalls)
 2. change directory to backend-go   
-```cd backend-go```
+```cd cloudtraffic_v1/backend-go```
 3. compiled backend  
 ```go install && go build```
 4. Create a unix service  
@@ -34,8 +34,8 @@ curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/build.s
     Type=simple
     Restart=always
     RestartSec=5s
-    WorkingDirectory=$HOME/cloudtraffic/backend-go/ #provide your path of working directory
-    ExecStart=$DIR/backend-go/persistenttrafficlight #provide build binary path 
+    WorkingDirectory=$HOME/cloudtraffic/cloudtraffic_v1/backend-go/ #provide your path of working directory
+    ExecStart=$HOME/cloudtraffic/cloudtraffic_v1/backend-go/persistenttrafficlight #provide build binary path 
     [Install]
     WantedBy=multi-user.target
     ```   
@@ -46,7 +46,7 @@ curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/build.s
 ```sudo npm install && sudo npm run build```  
 5.2 Point nginx to frontend build     
      ```
-     # change root /var/www/html to root /home/gauravsaxena_ongraph/frontend-react/build
+     # change root /var/www/html to root $HOME/cloudtraffic/cloudtraffic_v1/frontend-react/build
      sudo nano /etc/nginx/sites-available/default
      ```  
     5.3 Restart Nginx service  
