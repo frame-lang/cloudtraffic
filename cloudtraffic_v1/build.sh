@@ -1,6 +1,12 @@
 # #!/bin/bash
 
-DIR="$HOME/cloudtraffic"
+if [[ $EUID -ne 0 ]]
+then
+    sudo "$0" "$@"
+    exit $? 
+fi
+
+DIR="$HOME/cloudtraffic/cloudtraffic_v1"
 cd $HOME
 if [ -d "$DIR" ]; then
     cd $DIR
