@@ -53,7 +53,6 @@ import (
             stopWorkingTimer()
             startFlashingTimer() ^
         |<|
-            exitFlashingRed()
             stopFlashingTimer()
             startWorkingTimer() ^
         |tick|
@@ -88,15 +87,11 @@ import (
     enterGreen
     enterYellow
     enterFlashingRed
-    exitFlashingRed
     startWorkingTimer
     stopWorkingTimer
     startFlashingTimer
     stopFlashingTimer
-    startFlashing
-    stopFlashing
     changeFlashingAnimation
-    log [msg:string]
     destroyTrafficLight
 
     -domain-

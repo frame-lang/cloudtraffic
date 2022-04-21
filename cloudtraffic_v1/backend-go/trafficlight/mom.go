@@ -27,17 +27,14 @@ type TrafficLightMom interface {
     EnterGreen() 
     EnterYellow() 
     EnterFlashingRed() 
-    ExitFlashingRed() 
     StartWorkingTimer() 
     StopWorkingTimer() 
     StartFlashingTimer() 
     StopFlashingTimer() 
     StartFlashing() 
-    StopFlashing() 
     ChangeFlashingAnimation() 
     SystemError() 
     SystemRestart() 
-    Log(msg string) 
     DestroyTrafficLight() 
     GetConnection() *websocket.Conn
 }
@@ -47,16 +44,12 @@ type TrafficLightMom_actions interface {
     enterGreen() 
     enterYellow() 
     enterFlashingRed() 
-    exitFlashingRed() 
     startWorkingTimer() 
     stopWorkingTimer() 
     startFlashingTimer() 
     stopFlashingTimer() 
-    startFlashing() 
-    stopFlashing() 
     initTrafficLight() 
     changeFlashingAnimation() 
-    log(msg string) 
     destroyTrafficLight() 
     saveInDisk(data []byte) 
     loadFromDisk(clientId string) []byte
@@ -138,11 +131,6 @@ func (m *trafficLightMomStruct) EnterFlashingRed()  {
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) ExitFlashingRed()  {
-    e := framelang.FrameEvent{Msg:"exitFlashingRed"}
-    m._mux_(&e)
-}
-
 func (m *trafficLightMomStruct) StartWorkingTimer()  {
     e := framelang.FrameEvent{Msg:"startWorkingTimer"}
     m._mux_(&e)
@@ -168,11 +156,6 @@ func (m *trafficLightMomStruct) StartFlashing()  {
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StopFlashing()  {
-    e := framelang.FrameEvent{Msg:"stopFlashing"}
-    m._mux_(&e)
-}
-
 func (m *trafficLightMomStruct) ChangeFlashingAnimation()  {
     e := framelang.FrameEvent{Msg:"changeFlashingAnimation"}
     m._mux_(&e)
@@ -185,13 +168,6 @@ func (m *trafficLightMomStruct) SystemError()  {
 
 func (m *trafficLightMomStruct) SystemRestart()  {
     e := framelang.FrameEvent{Msg:"systemRestart"}
-    m._mux_(&e)
-}
-
-func (m *trafficLightMomStruct) Log(msg string)  {
-    params := make(map[string]interface{})
-    params["msg"] = msg
-    e := framelang.FrameEvent{Msg:"log", Params:params}
     m._mux_(&e)
 }
 
@@ -360,9 +336,6 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *framel
     case "enterFlashingRed":
         m.enterFlashingRed()
         return
-    case "exitFlashingRed":
-        m.exitFlashingRed()
-        return
     case "startWorkingTimer":
         m.startWorkingTimer()
         return
@@ -375,17 +348,8 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *framel
     case "stopFlashingTimer":
         m.stopFlashingTimer()
         return
-    case "startFlashing":
-        m.startFlashing()
-        return
-    case "stopFlashing":
-        m.stopFlashing()
-        return
     case "changeFlashingAnimation":
         m.changeFlashingAnimation()
-        return
-    case "log":
-        m.log(e.Params["msg"].(string))
         return
     case "destroyTrafficLight":
         m.destroyTrafficLight()
@@ -431,16 +395,12 @@ func (m *trafficLightMomStruct) enterRed()  {}
 func (m *trafficLightMomStruct) enterGreen()  {}
 func (m *trafficLightMomStruct) enterYellow()  {}
 func (m *trafficLightMomStruct) enterFlashingRed()  {}
-func (m *trafficLightMomStruct) exitFlashingRed()  {}
 func (m *trafficLightMomStruct) startWorkingTimer()  {}
 func (m *trafficLightMomStruct) stopWorkingTimer()  {}
 func (m *trafficLightMomStruct) startFlashingTimer()  {}
 func (m *trafficLightMomStruct) stopFlashingTimer()  {}
-func (m *trafficLightMomStruct) startFlashing()  {}
-func (m *trafficLightMomStruct) stopFlashing()  {}
 func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
-func (m *trafficLightMomStruct) log(msg string)  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
 func (m *trafficLightMomStruct) saveInDisk(data []byte)  {}
 func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {}
