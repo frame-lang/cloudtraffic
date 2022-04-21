@@ -34,10 +34,6 @@ func (m *trafficLightStruct) enterFlashingRed() {
 	m.mom.EnterFlashingRed()
 }
 
-func (m *trafficLightStruct) exitFlashingRed() {
-	m.mom.ExitFlashingRed()
-}
-
 func (m *trafficLightStruct) startWorkingTimer() {
 	m.mom.StartWorkingTimer()
 }
@@ -53,9 +49,6 @@ func (m *trafficLightStruct) stopFlashingTimer() {
 	m.mom.StopFlashingTimer()
 }
 
-func (m *trafficLightStruct) startFlashing() {}
-func (m *trafficLightStruct) stopFlashing()  {}
-
 func (m *trafficLightStruct) changeFlashingAnimation() {
 	flashColor := ""
 	if m.flashColor == "red" {
@@ -67,8 +60,6 @@ func (m *trafficLightStruct) changeFlashingAnimation() {
 	m.ChangeColor(flashColor)
 	m.mom.ChangeFlashingAnimation()
 }
-
-func (m *trafficLightStruct) log(msg string) {}
 
 func (m *trafficLightMomStruct) initTrafficLight() {
 	res := createResponse("begin", "", true)
@@ -118,9 +109,6 @@ func (m *trafficLightMomStruct) enterFlashingRed() {
 	sendResponse(res, m.connection)
 }
 
-func (m *trafficLightMomStruct) exitFlashingRed() {
-}
-
 func (m *trafficLightMomStruct) startWorkingTimer() {
 	mom:= TrafficLights[m.clientId]
 	m.stopper = setInterval(mom.Tick, 2*time.Second)
@@ -139,16 +127,12 @@ func (m *trafficLightMomStruct) stopFlashingTimer() {
 	m.stopper <- true
 }
 
-func (m *trafficLightMomStruct) startFlashing() {}
-func (m *trafficLightMomStruct) stopFlashing()  {}
 
 func (m *trafficLightMomStruct) changeFlashingAnimation() {
 	color := m.trafficLight.GetColor()
 	res := createResponse("error", color, false)
 	sendResponse(res, m.connection)
 }
-
-func (m *trafficLightMomStruct) log(msg string) {}
 
 func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {
 	fileName := GetFileName(clientId)

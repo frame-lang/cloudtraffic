@@ -41,15 +41,11 @@ type TrafficLight_actions interface {
     enterGreen() 
     enterYellow() 
     enterFlashingRed() 
-    exitFlashingRed() 
     startWorkingTimer() 
     stopWorkingTimer() 
     startFlashingTimer() 
     stopFlashingTimer() 
-    startFlashing() 
-    stopFlashing() 
     changeFlashingAnimation() 
-    log(msg string) 
     destroyTrafficLight() 
 }
 
@@ -270,7 +266,6 @@ func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *framelang.FrameE
         m.startFlashingTimer()
         return
     case "<":
-        m.exitFlashingRed()
         m.stopFlashingTimer()
         m.startWorkingTimer()
         return
@@ -348,15 +343,11 @@ func (m *trafficLightStruct) enterRed()  {}
 func (m *trafficLightStruct) enterGreen()  {}
 func (m *trafficLightStruct) enterYellow()  {}
 func (m *trafficLightStruct) enterFlashingRed()  {}
-func (m *trafficLightStruct) exitFlashingRed()  {}
 func (m *trafficLightStruct) startWorkingTimer()  {}
 func (m *trafficLightStruct) stopWorkingTimer()  {}
 func (m *trafficLightStruct) startFlashingTimer()  {}
 func (m *trafficLightStruct) stopFlashingTimer()  {}
-func (m *trafficLightStruct) startFlashing()  {}
-func (m *trafficLightStruct) stopFlashing()  {}
 func (m *trafficLightStruct) changeFlashingAnimation()  {}
-func (m *trafficLightStruct) log(msg string)  {}
 func (m *trafficLightStruct) destroyTrafficLight()  {}
 ********************/
 

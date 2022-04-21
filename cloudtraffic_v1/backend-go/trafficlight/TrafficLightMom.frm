@@ -19,17 +19,14 @@ import (
     enterGreen
     enterYellow
     enterFlashingRed
-    exitFlashingRed
     startWorkingTimer
     stopWorkingTimer
     startFlashingTimer
     stopFlashingTimer
     startFlashing
-    stopFlashing
     changeFlashingAnimation
     systemError
     systemRestart
-    log [msg:string]
     destroyTrafficLight
     getConnection:`*websocket.Conn`
 
@@ -70,15 +67,11 @@ import (
         |enterGreen| enterGreen()  ^
         |enterYellow| enterYellow() ^
         |enterFlashingRed| enterFlashingRed() ^
-        |exitFlashingRed| exitFlashingRed() ^
         |startWorkingTimer| startWorkingTimer() ^
         |stopWorkingTimer| stopWorkingTimer() ^
         |startFlashingTimer| startFlashingTimer() ^
         |stopFlashingTimer| stopFlashingTimer() ^
-        |startFlashing| startFlashing() ^
-        |stopFlashing| stopFlashing() ^
         |changeFlashingAnimation| changeFlashingAnimation() ^
-        |log| [msg:string] log(msg) ^
         |destroyTrafficLight| destroyTrafficLight() ^
 
     $End => $TrafficLightApi
@@ -97,16 +90,12 @@ import (
     enterGreen
     enterYellow
     enterFlashingRed
-    exitFlashingRed
     startWorkingTimer
     stopWorkingTimer
     startFlashingTimer
     stopFlashingTimer   
-    startFlashing
-    stopFlashing
     initTrafficLight
     changeFlashingAnimation
-    log [msg:string]
     destroyTrafficLight
     saveInDisk [data:`[]byte`]
     loadFromDisk [clientId: string]: `[]byte`
