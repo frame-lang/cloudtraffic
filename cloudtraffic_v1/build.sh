@@ -1,12 +1,6 @@
-#!/bin/bash
+#!/usr/bin/sudo sh
 
-if [[ $EUID -ne 0 ]]
-then
-    sudo "$0" "$@"
-    exit $? 
-fi
-
-DIR="$HOME/cloudtraffic/cloudtraffic_v1"
+DIR="$HOME/cloudtraffic"
 cd $HOME
 if [ -d "$DIR" ]; then
     cd $DIR
@@ -16,7 +10,7 @@ else
     git clone https://github.com/frame-lang/cloudtraffic.git
 
 fi
-
+DIR="$HOME/cloudtraffic/cloudtraffic_v1"
 cd $DIR/backend-go
 
 echo "#### Delete previous backend build.... ####" 
