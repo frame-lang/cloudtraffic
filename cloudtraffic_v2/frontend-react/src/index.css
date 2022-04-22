@@ -1,0 +1,18 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto';
+}
+
+main {
+  display: flex;
+  height: calc(100vh - 64px);
+  padding: 40px 20px;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 40px;
+}
