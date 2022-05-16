@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import '../App.css';
-import Header from './Header'
-import Main from './Main'
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
 
 const socketUrl = `ws://${window.location.hostname}:8000/ws`;
 
@@ -26,6 +27,23 @@ function App() {
 
   const [state, setState] = useState({});
 
+  const reconnect = () => {
+    console.log('#####');
+    window.location.reload(false);
+
+    // const {
+    //   sendMessageNew,
+    //   lastMessageNew,
+    //   readyStateNew,
+    // } = useWebSocket(socketUrl);
+
+    // sendMessage = sendMessageNew;
+    // lastMessage = lastMessageNew;
+    // readyState = readyStateNew;
+
+    // sendMessage('start')
+  }
+
   useEffect(() => {
     if (!lastMessage) return;
     const data = JSON.parse(lastMessage.data);
@@ -39,8 +57,9 @@ function App() {
 
   return (
     <div className="App">
-      <Header state={state} sendMessage={sendMessage}/>
+      <Header state={state} sendMessage={sendMessage} connectionStatus={connectionStatus} reconnect={reconnect}/>
       <Main state={state} sendMessage={sendMessage}/>
+      <Footer connectionStatus={connectionStatus} />
     </div>
   );
 }

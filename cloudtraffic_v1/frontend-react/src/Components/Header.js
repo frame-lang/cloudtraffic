@@ -1,11 +1,15 @@
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import TrafficIcon from '@mui/icons-material/Traffic';
-
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { STATES } from '../Utils/Constants';
 
-export default function Header({state, sendMessage}) {
-
+export default function Header({
+    state,
+    sendMessage,
+    connectionStatus,
+    reconnect
+}) {
     function handleClick() {
         if (state.name === STATES['END_STATE']) {
             sendMessage('start')
@@ -23,18 +27,24 @@ export default function Header({state, sendMessage}) {
                 </Typography>
 
                 <Box sx={{ '& > button': { m: 1 } }}>
-                    <LoadingButton
-                        color="secondary"
-                        onClick={handleClick}
-                        loading={state.loading}
-                        loadingPosition="start"
-                        startIcon={<TrafficIcon />}
-                        variant="contained"
-                    >
-                        {state.loading && 'Loading...'}
-                        {(!state.loading && state.name === STATES['END_STATE']) && 'Create Traffic Light' }
-                        {(!state.loading && state.name !== STATES['END_STATE']) && 'Destroy Traffic Light' }
-                    </LoadingButton>
+                    {connectionStatus !== 'Closed' ? (
+                        <LoadingButton
+                            color="secondary"
+                            onClick={handleClick}
+                            loading={state.loading}
+                            loadingPosition="start"
+                            startIcon={<TrafficIcon />}
+                            variant="contained"
+                        >
+                            {state.loading && 'Loading...'}
+                            {(!state.loading && state.name === STATES['END_STATE']) && 'Create Traffic Light' }
+                            {(!state.loading && state.name !== STATES['END_STATE']) && 'Destroy Traffic Light' }
+                        </LoadingButton>
+                    ) : (
+                        <Button onClick={reconnect} variant="contained" color='success' startIcon={<AutorenewIcon />}>
+                            Reconnect
+                        </Button>
+                    )}
                 </Box>
             </Toolbar>
             </AppBar>
