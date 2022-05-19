@@ -1,4 +1,4 @@
-package cloudpubsub
+package websocket
 
 import (
 	"context"
@@ -7,10 +7,9 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-func Publish(projectID string, topicID string, data pubsub.Message) error {
+func publishToTLService(projectID string, topicID string, data pubsub.Message) error {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, projectID)
-	fmt.Println("client", client)
 	if err != nil {
 		return fmt.Errorf("pubsub.NewClient: %v", err)
 	}

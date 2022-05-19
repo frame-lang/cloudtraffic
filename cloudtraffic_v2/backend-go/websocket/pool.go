@@ -2,10 +2,6 @@ package websocket
 
 import (
 	"fmt"
-	"log"
-	"os"
-
-	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/trafficlight"
 )
 
 func NewPool() *Pool {
@@ -13,7 +9,6 @@ func NewPool() *Pool {
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Clients:    make(map[*Client]bool),
-		// Broadcast:  make(chan Request),
 	}
 }
 
@@ -35,12 +30,7 @@ func (pool *Pool) Start() {
 			fmt.Println("Client unregistered, Size of Connection Pool: ", len(pool.Clients))
 			for singleClient, _ := range pool.Clients {
 				if client.ID == singleClient.ID {
-					trafficlight.TrafficLights[singleClient.ID].Stop()
-					fileName := trafficlight.GetFileName(client.ID)
-					err := os.Remove(fileName)
-					if err != nil {
-						log.Fatal(err)
-					}
+					// *** Event to clear data of user
 					delete(pool.Clients, client)
 				}
 				client.Connection.WriteJSON(Response{
@@ -50,17 +40,6 @@ func (pool *Pool) Start() {
 				})
 			}
 			break
-
-			// No Broadcast functionality use currently
-
-			// case message := <-pool.Broadcast:
-			//     fmt.Println("Sending message to all clients in Pool")
-			//     for client, _ := range pool.Clients {
-			//         if err := client.Conn.WriteJSON(message); err != nil {
-			//             fmt.Println(err)
-			//             return
-			//         }
-			//     }
 		}
 	}
 }

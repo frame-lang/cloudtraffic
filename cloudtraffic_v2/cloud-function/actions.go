@@ -1,8 +1,7 @@
 package trafficlight
 
 import (
-	"log"
-	"os"
+	"fmt"
 	"time"
 )
 
@@ -62,84 +61,81 @@ func (m *trafficLightStruct) changeFlashingAnimation() {
 }
 
 func (m *trafficLightMomStruct) initTrafficLight() {
-	res := createResponse("begin", "", true)
-	sendResponse(res, m.connection)
-	time.Sleep(1 * time.Second)
+	publishResponse("begin", "", "true")
+	time.Sleep(3 * time.Second)
 }
 
 func (m *trafficLightMomStruct) destroyTrafficLight() {
-	res := createResponse("end", "", false)
-	sendResponse(res, m.connection)
+	publishResponse("end", "", "false")
 }
 
 func (m *trafficLightMomStruct) saveInDisk(data []byte)  {
-	fileName := GetFileName(m.clientId)
-	jsonFile, err := os.Create(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer jsonFile.Close()
+	fmt.Println("saveInDisk")
 
-	jsonFile.Write(data)
-	jsonFile.Close()
+	// fileName := GetFileName(m.clientId)
+	// jsonFile, err := os.Create(fileName)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer jsonFile.Close()
+
+	// jsonFile.Write(data)
+	// jsonFile.Close()
 }
 
 
 func (m *trafficLightMomStruct) enterRed() {
 	color := m.trafficLight.GetColor()
-	res := createResponse("working", color, false)
-	sendResponse(res, m.connection)
+	publishResponse("working", color, "false")
 }
 
 func (m *trafficLightMomStruct) enterGreen() {
 	color := m.trafficLight.GetColor()
-	res := createResponse("working", color, false)
-	sendResponse(res, m.connection)
+	publishResponse("working", color, "false")
 }
 
 func (m *trafficLightMomStruct) enterYellow() {
 	color := m.trafficLight.GetColor()
-	res := createResponse("working", color, false)
-	sendResponse(res, m.connection)
+	publishResponse("working", color, "false")
 }
 
 func (m *trafficLightMomStruct) enterFlashingRed() {
 	color := m.trafficLight.GetColor()
-	res := createResponse("error", color, false)
-	sendResponse(res, m.connection)
+	publishResponse("error", color, "false")
 }
 
 func (m *trafficLightMomStruct) startWorkingTimer() {
-	mom:= TrafficLights[m.clientId]
-	m.stopper = setInterval(mom.Tick, 2*time.Second)
+	publishTimerEvent("enableTimer")
 }
 
 func (m *trafficLightMomStruct) stopWorkingTimer() {
-	m.stopper <- true
+	publishTimerEvent("disableTimer")
 }
 
 func (m *trafficLightMomStruct) startFlashingTimer() {
-	mom:= TrafficLights[m.clientId]
-	m.stopper = setInterval(mom.Tick, 1*time.Second)
+	// mom:= TrafficLights[m.clientId]
+	// m.stopper = setInterval(mom.Tick, 1*time.Second)
+	// Call to util server to start timer
 }
 
 func (m *trafficLightMomStruct) stopFlashingTimer() {
-	m.stopper <- true
+	// m.stopper <- true
+	// Call to util server to stop timer
 }
 
 
 func (m *trafficLightMomStruct) changeFlashingAnimation() {
 	color := m.trafficLight.GetColor()
-	res := createResponse("error", color, false)
-	sendResponse(res, m.connection)
+	publishResponse("error", color, "false")
 }
 
 func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {
-	fileName := GetFileName(clientId)
-	savedData, err1 := os.ReadFile(fileName)
-	if err1 != nil {
-		panic(err1)
-	}
-
-	return savedData
+	fmt.Println("loadFromDisk")
+	// fileName := GetFileName(clientId)
+	// savedData, err1 := os.ReadFile(fileName)
+	// if err1 != nil {
+	// 	panic(err1)
+	// }
+	return []byte("testing")
+	// return savedData
 }

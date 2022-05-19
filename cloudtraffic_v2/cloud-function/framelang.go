@@ -1,4 +1,4 @@
-package framelang
+package trafficlight
 
 type FrameState uint
 

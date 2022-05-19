@@ -4,8 +4,6 @@ package trafficlight
 
 import (
 	"encoding/json"
-
-	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/framelang"
 )
 
 type TrafficLightState uint
@@ -74,7 +72,7 @@ func NewTrafficLight(mom TrafficLightMom) TrafficLight {
 	m.flashColor = ""
 
 	// Send system start event
-	e := framelang.FrameEvent{Msg: ">"}
+	e := FrameEvent{Msg: ">"}
 	m._mux_(&e)
 	return m
 }
@@ -123,46 +121,46 @@ func (m *trafficLightStruct) Marshal() []byte {
 //===================== Interface Block ===================//
 
 func (m *trafficLightStruct) Start() {
-	e := framelang.FrameEvent{Msg: ">>"}
+	e := FrameEvent{Msg: ">>"}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) Stop() {
-	e := framelang.FrameEvent{Msg: "stop"}
+	e := FrameEvent{Msg: "stop"}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) Tick() {
-	e := framelang.FrameEvent{Msg: "tick"}
+	e := FrameEvent{Msg: "tick"}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) SystemError() {
-	e := framelang.FrameEvent{Msg: "systemError"}
+	e := FrameEvent{Msg: "systemError"}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) SystemRestart() {
-	e := framelang.FrameEvent{Msg: "systemRestart"}
+	e := FrameEvent{Msg: "systemRestart"}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) ChangeColor(color string) {
 	params := make(map[string]interface{})
 	params["color"] = color
-	e := framelang.FrameEvent{Msg: "changeColor", Params: params}
+	e := FrameEvent{Msg: "changeColor", Params: params}
 	m._mux_(&e)
 }
 
 func (m *trafficLightStruct) GetColor() string {
-	e := framelang.FrameEvent{Msg: "getColor"}
+	e := FrameEvent{Msg: "getColor"}
 	m._mux_(&e)
 	return e.Ret.(string)
 }
 
 //====================== Multiplexer ====================//
 
-func (m *trafficLightStruct) _mux_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _mux_(e *FrameEvent) {
 	switch m._compartment_.State {
 	case TrafficLightState_Begin:
 		m._TrafficLightState_Begin_(e)
@@ -185,7 +183,7 @@ func (m *trafficLightStruct) _mux_(e *framelang.FrameEvent) {
 		m._nextCompartment_ = nil
 		if nextCompartment._forwardEvent_ != nil &&
 			nextCompartment._forwardEvent_.Msg == ">" {
-			m._mux_(&framelang.FrameEvent{Msg: "<", Params: m._compartment_.GetExitArgs(), Ret: nil})
+			m._mux_(&FrameEvent{Msg: "<", Params: m._compartment_.GetExitArgs(), Ret: nil})
 			m._compartment_ = nextCompartment
 			m._mux_(nextCompartment._forwardEvent_)
 		} else {
@@ -200,7 +198,7 @@ func (m *trafficLightStruct) _mux_(e *framelang.FrameEvent) {
 
 //===================== Machine Block ===================//
 
-func (m *trafficLightStruct) _TrafficLightState_Begin_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_Begin_(e *FrameEvent) {
 	switch e.Msg {
 	case ">>":
 		m.initTrafficLight()
@@ -212,7 +210,7 @@ func (m *trafficLightStruct) _TrafficLightState_Begin_(e *framelang.FrameEvent) 
 	}
 }
 
-func (m *trafficLightStruct) _TrafficLightState_Red_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_Red_(e *FrameEvent) {
 	switch e.Msg {
 	case ">":
 		m.enterRed()
@@ -227,7 +225,7 @@ func (m *trafficLightStruct) _TrafficLightState_Red_(e *framelang.FrameEvent) {
 
 }
 
-func (m *trafficLightStruct) _TrafficLightState_Green_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_Green_(e *FrameEvent) {
 	switch e.Msg {
 	case ">":
 		m.enterGreen()
@@ -242,7 +240,7 @@ func (m *trafficLightStruct) _TrafficLightState_Green_(e *framelang.FrameEvent) 
 
 }
 
-func (m *trafficLightStruct) _TrafficLightState_Yellow_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_Yellow_(e *FrameEvent) {
 	switch e.Msg {
 	case ">":
 		m.enterYellow()
@@ -257,7 +255,7 @@ func (m *trafficLightStruct) _TrafficLightState_Yellow_(e *framelang.FrameEvent)
 
 }
 
-func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *FrameEvent) {
 	switch e.Msg {
 	case ">":
 		m.enterFlashingRed()
@@ -290,7 +288,7 @@ func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *framelang.FrameE
 	}
 }
 
-func (m *trafficLightStruct) _TrafficLightState_End_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_End_(e *FrameEvent) {
 	switch e.Msg {
 	case ">":
 		m.flashColor = ""
@@ -300,7 +298,7 @@ func (m *trafficLightStruct) _TrafficLightState_End_(e *framelang.FrameEvent) {
 	}
 }
 
-func (m *trafficLightStruct) _TrafficLightState_Working_(e *framelang.FrameEvent) {
+func (m *trafficLightStruct) _TrafficLightState_Working_(e *FrameEvent) {
 	switch e.Msg {
 	case "stop":
 
@@ -328,9 +326,9 @@ func (m *trafficLightStruct) _transition_(compartment *TrafficLightCompartment) 
 }
 
 func (m *trafficLightStruct) _do_transition_(nextCompartment *TrafficLightCompartment) {
-	m._mux_(&framelang.FrameEvent{Msg: "<", Params: m._compartment_.GetExitArgs(), Ret: nil})
+	m._mux_(&FrameEvent{Msg: "<", Params: m._compartment_.GetExitArgs(), Ret: nil})
 	m._compartment_ = nextCompartment
-	m._mux_(&framelang.FrameEvent{Msg: ">", Params: m._compartment_.GetEnterArgs(), Ret: nil})
+	m._mux_(&FrameEvent{Msg: ">", Params: m._compartment_.GetEnterArgs(), Ret: nil})
 }
 
 /********************
@@ -358,7 +356,7 @@ type TrafficLightCompartment struct {
 	StateVars      map[string]interface{}
 	EnterArgs      map[string]interface{}
 	ExitArgs       map[string]interface{}
-	_forwardEvent_ *framelang.FrameEvent
+	_forwardEvent_ *FrameEvent
 }
 
 func NewTrafficLightCompartment(state TrafficLightState) *TrafficLightCompartment {

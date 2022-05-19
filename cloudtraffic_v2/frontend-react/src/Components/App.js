@@ -34,7 +34,7 @@ function App() {
   }, [lastMessage]);
 
   useEffect(() => {
-    sendMessage('start')
+    sendMessage('init')
   }, [])
 
   return (

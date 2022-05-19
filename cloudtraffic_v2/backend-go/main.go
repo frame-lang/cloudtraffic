@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	// "github.com/frame-lang/cloudtraffic/cloudtraffic_v2/trafficlight"
 	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/websocket"
 )
 
@@ -23,15 +21,16 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		Connection: conn,
 		Stopper: nil,
 	}
-	fmt.Println("client", client)
-	// trafficlight.CreateNewTrafficLight(timestamp, conn)
 	pool.Register <- client
+	websocket.AddUser(timestamp, client)
 	client.Read()
 }
 
 func setupRoutes() {
 	pool := websocket.NewPool()
 	go pool.Start()
+
+	go websocket.PullMsgs("cloud-traffic-347207", "cloudtraffic-utils-service-sub") 
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(pool, w, r)

@@ -2,12 +2,9 @@ package websocket
 
 import (
 	"log"
-
-	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/trafficlight"
-	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/cloudpubsub"
 	"cloud.google.com/go/pubsub"
-
 )
+
 
 func (c *Client) Read() {
 	defer func() {
@@ -21,24 +18,19 @@ func (c *Client) Read() {
 			log.Println(err)
 			return
 		}
-		trafficLightMom := trafficlight.TrafficLights[c.ID]
 
-		if string(p) == "start" {
-			data := pubsub.Message{
-				Data: []byte("Data from Go Back-end service"),
-				Attributes: map[string]string{
-					"clientId": c.ID,
-					"event": "start",
-				},
-			}
-			cloudpubsub.Publish("cloud-traffic-347207", "tl-topic", data)
-			cloudpubsub.PullMsgs("cloud-traffic-347207", "tl-subscription")
+		var data pubsub.Message
+		
+		if string(p) == "init" {
+			data = createPubSubMsg(c.ID, "init")
 		} else if string(p) == "error" {
-			trafficLightMom.SystemError()
+			data = createPubSubMsg(c.ID, "error")
 		} else if string(p) == "restart" {
-			trafficLightMom.SystemRestart()
+			data = createPubSubMsg(c.ID, "restart")
 		} else if string(p) == "end" {
-			trafficLightMom.Stop()
+			data = createPubSubMsg(c.ID, "end")
 		}
+
+		publishToTLService("cloud-traffic-347207", "cloudtraffic-trafficlight-service-topic", data)
 	}
 }

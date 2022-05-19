@@ -8,7 +8,7 @@ export default function Header({state, sendMessage}) {
 
     function handleClick() {
         if (state.name === STATES['END_STATE']) {
-            sendMessage('start')
+            sendMessage('init')
             return
         }
         sendMessage('end')

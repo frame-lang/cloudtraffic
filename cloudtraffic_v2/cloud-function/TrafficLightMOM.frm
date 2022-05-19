@@ -3,11 +3,10 @@ package trafficlight
 
 import (
 	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/framelang"
-	"github.com/gorilla/websocket"
 )
 ```
 
-#TrafficLightMom[clntId: string conn: `*websocket.Conn`]
+#TrafficLightMom
 
     -interface-
 
@@ -15,6 +14,8 @@ import (
     stop
     initTrafficLight
     tick
+    init
+    end
     enterRed
     enterGreen
     enterYellow
@@ -28,38 +29,28 @@ import (
     systemError
     systemRestart
     destroyTrafficLight
-    getConnection:`*websocket.Conn`
 
     -machine-
 
-    $New => $TrafficLightApi
-        |>>|
+    $Entry => $TrafficLightApi
+        |init|
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
-            -> "Traffic Light\nStarted" $Saving ^
-        |getConnection|:`*websocket.Conn` @^ = connection ^
+            -> "Saving" $Save ^
+        |tick|
+            trafficLight.Tick() -> "Done" $Save ^
+        |systemError|
+            trafficLight.SystemError() -> "Done" $Save ^
+        |systemRestart|
+            trafficLight.SystemError() -> "Done" $Save ^
+        |end|
+            trafficLight.Stop() -> "Done" $Save ^
 
-    $Saving 
+    $Save
         |>|
             var jsonData = trafficLight.Marshal() 
             saveInDisk(jsonData)
-            trafficLight = nil
-            -> "Saved" $Persisted ^
-
-    $Persisted 
-        |tick| -> "Tick"  =>  $Working ^
-        |systemError| -> "System Error" =>  $Working ^
-        |systemRestart| -> "System Error" =>  $Working ^
-        |getConnection|:`*websocket.Conn` @^ = connection ^
-        |stop| -> "Stop" $End ^
-
-    $Working => $TrafficLightApi
-        |>|
-            var savedData = loadFromDisk(#.clientId)
-            trafficLight = LoadTrafficLight(# savedData) ^
-        |tick| trafficLight.Tick() -> "Done" $Saving ^
-        |systemError| trafficLight.SystemError() -> "Done" $Saving ^
-        |systemRestart| trafficLight.SystemRestart() -> "Done" $Saving ^
+            trafficLight = nil ^
 
     $TrafficLightApi
         |initTrafficLight| initTrafficLight() ^
@@ -73,16 +64,6 @@ import (
         |stopFlashingTimer| stopFlashingTimer() ^
         |changeFlashingAnimation| changeFlashingAnimation() ^
         |destroyTrafficLight| destroyTrafficLight() ^
-
-    $End => $TrafficLightApi
-        |>|
-            var savedData = loadFromDisk(#.clientId)
-            trafficLight = LoadTrafficLight(# savedData)
-            trafficLight.Stop()
-            var jsonData = trafficLight.Marshal() 
-            saveInDisk(jsonData)
-            trafficLight = nil
-            -> $New ^
 
     -actions-
 
@@ -103,7 +84,4 @@ import (
     -domain-
 
     var trafficLight:TrafficLight = null
-    var connection:`*websocket.Conn` = conn
-    var clientId:string = clntId
-    var stopper:`chan<- bool` = null
 ##
