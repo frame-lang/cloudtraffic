@@ -31,6 +31,6 @@ func (c *Client) Read() {
 			data = createPubSubMsg(c.ID, "end")
 		}
 
-		publishToTLService("cloud-traffic-347207", "cloudtraffic-trafficlight-service-topic", data)
+		publishToTLService(data)
 	}
 }

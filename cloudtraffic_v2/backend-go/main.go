@@ -30,7 +30,7 @@ func setupRoutes() {
 	pool := websocket.NewPool()
 	go pool.Start()
 
-	go websocket.PullMsgs("cloud-traffic-347207", "cloudtraffic-utils-service-sub") 
+	go websocket.PullMsgs() 
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(pool, w, r)

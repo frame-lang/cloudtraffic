@@ -20,8 +20,27 @@ type PubSubMessage struct {
 
 func EntryPoint(ctx context.Context, m PubSubMessage) error {
 	log.Println("Client ID ->", m.Attributes.ClientID)
+
+
+	var err error
+	redisPool, err = initializeRedis()
+	if err != nil {
+			log.Printf("initializeRedis: %v", err)
+	}
+
 	trafficLightMom := NewTrafficLightMom()
 	setUserID(m.Attributes.ClientID)
+
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	counter, err := conn.Do("APPEND", "test", "value")
+	if err != nil {
+			log.Printf("redis.Int: %v", err)
+	}
+
+	log.Println("counter", counter)
+
 	log.Println("trafficLightMom", trafficLightMom)
 	var event string = m.Attributes.Event
 

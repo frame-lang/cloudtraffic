@@ -24,15 +24,15 @@ type ResponseMessage struct {
 	Attributes StateResponse `json:"attributes"`
 }
 
-func PullMsgs(projectID, subID string) {
+func PullMsgs() {
 	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, projectID)
+	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
 		fmt.Errorf("pubsub.NewClient: %v", err)
 	}
 	defer client.Close()
 
-	sub := client.Subscription(subID)
+	sub := client.Subscription(SUBSCRIPTION_ID)
 	var res StateResponse
 
 	// Receive messages for 10 seconds, which simplifies testing.

@@ -7,15 +7,15 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-func publishToTLService(projectID string, topicID string, data pubsub.Message) error {
+func publishToTLService(data pubsub.Message) error {
 	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, projectID)
+	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
 		return fmt.Errorf("pubsub.NewClient: %v", err)
 	}
 	defer client.Close()
 
-	t := client.Topic(topicID)
+	t := client.Topic(TOPIC_ID)
 	result := t.Publish(ctx, &data)
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.

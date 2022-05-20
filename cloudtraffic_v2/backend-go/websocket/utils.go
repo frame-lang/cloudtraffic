@@ -37,7 +37,7 @@ func setInterval(p func(string), interval time.Duration, userID string) chan<- b
 func tick(userID string) {
 	log.Println("Tick.....", userID)
 	data := createPubSubMsg(userID, "tick")
-	publishToTLService("cloud-traffic-347207", "cloudtraffic-trafficlight-service-topic", data)
+	publishToTLService(data)
 }
 
 func createPubSubMsg(userId string, eventName string) pubsub.Message {
