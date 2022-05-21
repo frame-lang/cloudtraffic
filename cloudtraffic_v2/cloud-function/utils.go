@@ -50,8 +50,6 @@ func init() {
 			log.Printf("initializeRedis: %v", err)
 			return
 	}
-
-	log.Printf("redisPool", redisPool)
 }
 
 func setUserID(ID string) {
@@ -115,4 +113,37 @@ func initializeRedis() (*redis.Pool, error) {
 					return c, err
 			},
 	}, nil
+}
+
+func getFromRedis() []byte {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	data, err := redis.String(conn.Do("GET", userID))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	log.Println("Data Received ->", data)
+
+	return []byte(data)
+}
+
+func setInRedis(data string) {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	res, err := conn.Do("SET", userID, data)
+	if err != nil {
+			log.Printf("redis.Int: %v", err)
+	}
+
+	log.Println("Set response ->", res)
+
+	allKeys, err2 := conn.Do("KEYS", "*")
+	if err2 != nil {
+			log.Printf("redis.Int: %v", err)
+	}
+
+	log.Println("All Keys ->", allKeys)
 }

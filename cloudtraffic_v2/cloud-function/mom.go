@@ -29,8 +29,6 @@ const (
 )
 
 type TrafficLightMom interface {
-    Start() 
-    Stop() 
     InitTrafficLight() 
     Tick() 
     Init() 
@@ -63,7 +61,7 @@ type TrafficLightMom_actions interface {
     changeFlashingAnimation() 
     destroyTrafficLight() 
     saveInDisk(data []byte) 
-    loadFromDisk(clientId string) []byte
+    loadFromDisk() []byte
 }
 
 
@@ -74,16 +72,6 @@ type trafficLightMomStruct struct {
 }
 
 //===================== Interface Block ===================//
-
-func (m *trafficLightMomStruct) Start()  {
-    e := FrameEvent{Msg:">>"}
-    m._mux_(&e)
-}
-
-func (m *trafficLightMomStruct) Stop()  {
-    e := FrameEvent{Msg:"stop"}
-    m._mux_(&e)
-}
 
 func (m *trafficLightMomStruct) InitTrafficLight()  {
     e := FrameEvent{Msg:"initTrafficLight"}
@@ -204,6 +192,10 @@ func (m *trafficLightMomStruct) _mux_(e *FrameEvent) {
 
 func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
     switch e.Msg {
+    case ">":
+        var savedData  = m.loadFromDisk()
+        m.trafficLight = LoadTrafficLight(m,savedData)
+        return
     case "init":
         m.trafficLight = NewTrafficLight(m)
         m.trafficLight.Start()
@@ -224,7 +216,7 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
         m._transition_(compartment)
         return
     case "systemRestart":
-        m.trafficLight.SystemError()
+        m.trafficLight.SystemRestart()
         // Done
         compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
         m._transition_(compartment)
@@ -319,7 +311,7 @@ func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
 func (m *trafficLightMomStruct) saveInDisk(data []byte)  {}
-func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {}
+func (m *trafficLightMomStruct) loadFromDisk() []byte {}
 
 ********************************************************/
 

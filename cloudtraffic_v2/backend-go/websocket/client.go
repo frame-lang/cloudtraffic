@@ -5,7 +5,6 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-
 func (c *Client) Read() {
 	defer func() {
 		c.Pool.Unregister <- c

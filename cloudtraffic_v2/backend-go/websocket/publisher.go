@@ -8,6 +8,7 @@ import (
 )
 
 func publishToTLService(data pubsub.Message) error {
+	fmt.Println("Publishing to TL service ->", data)
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
@@ -24,5 +25,6 @@ func publishToTLService(data pubsub.Message) error {
 			return fmt.Errorf("Get: %v", err)
 	}
 	fmt.Println("Published a message; msg ID: ", id)
+	return nil
 	return nil
 }

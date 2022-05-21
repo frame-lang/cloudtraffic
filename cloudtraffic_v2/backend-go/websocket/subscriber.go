@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	// "strings"
 	"sync/atomic"
 	"time"
 
 	"cloud.google.com/go/pubsub"
-	// "github.com/gorilla/websocket"
 )
 
 type StateResponse struct {
@@ -43,7 +41,7 @@ func PullMsgs() {
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
-		fmt.Println("Got message: ", string(msg.Data))
+		fmt.Println("***Recieved message*** -> ", string(msg.Data), "\n")
 		userID :=  msg.Attributes["UserID"]
 		var activeUser *Client = Users[userID]
 
@@ -53,7 +51,7 @@ func PullMsgs() {
 		
 		if string(msg.Data) == "enableTimer" {
 			log.Println("enableTimer")
-			activeUser.Stopper = setInterval(tick, 5*time.Second, userID)
+			activeUser.Stopper = setInterval(tick, 10*time.Second, userID)
 			return
 		}
 
@@ -73,7 +71,7 @@ func PullMsgs() {
 			Loading: loading,
 		}
 
-		log.Println("res", res)
+		log.Println("Sending Response to UI ->", res)
 
 		if err := activeUser.Connection.WriteJSON(res); err != nil {
 			log.Println(err)
@@ -82,6 +80,7 @@ func PullMsgs() {
 		atomic.AddInt32(&received, 1)
 		msg.Ack()
 	})
+
 	if err != nil {
 		fmt.Errorf("sub.Receive: %v", err)
 	}

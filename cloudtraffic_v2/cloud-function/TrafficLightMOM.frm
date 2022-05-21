@@ -10,8 +10,6 @@ import (
 
     -interface-
 
-    start @(|>>|)
-    stop
     initTrafficLight
     tick
     init
@@ -33,6 +31,9 @@ import (
     -machine-
 
     $Entry => $TrafficLightApi
+        |>|
+            var savedData = loadFromDisk()
+            trafficLight = LoadTrafficLight(# savedData) ^
         |init|
             trafficLight = NewTrafficLight(#)
             trafficLight.Start()
@@ -42,7 +43,7 @@ import (
         |systemError|
             trafficLight.SystemError() -> "Done" $Save ^
         |systemRestart|
-            trafficLight.SystemError() -> "Done" $Save ^
+            trafficLight.SystemRestart() -> "Done" $Save ^
         |end|
             trafficLight.Stop() -> "Done" $Save ^
 
@@ -79,7 +80,7 @@ import (
     changeFlashingAnimation
     destroyTrafficLight
     saveInDisk [data:`[]byte`]
-    loadFromDisk [clientId: string]: `[]byte`
+    loadFromDisk: `[]byte`
 
     -domain-
 

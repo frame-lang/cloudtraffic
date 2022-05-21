@@ -62,27 +62,13 @@ func (m *trafficLightStruct) changeFlashingAnimation() {
 
 func (m *trafficLightMomStruct) initTrafficLight() {
 	publishResponse("begin", "", "true")
-	time.Sleep(3 * time.Second)
+	time.Sleep(2 * time.Second)
 }
 
 func (m *trafficLightMomStruct) destroyTrafficLight() {
+	fmt.Println("destroyTrafficLight")
 	publishResponse("end", "", "false")
 }
-
-func (m *trafficLightMomStruct) saveInDisk(data []byte)  {
-	fmt.Println("saveInDisk")
-
-	// fileName := GetFileName(m.clientId)
-	// jsonFile, err := os.Create(fileName)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer jsonFile.Close()
-
-	// jsonFile.Write(data)
-	// jsonFile.Close()
-}
-
 
 func (m *trafficLightMomStruct) enterRed() {
 	color := m.trafficLight.GetColor()
@@ -109,18 +95,16 @@ func (m *trafficLightMomStruct) startWorkingTimer() {
 }
 
 func (m *trafficLightMomStruct) stopWorkingTimer() {
+	fmt.Println("stopWorkingTimer disableTimer")
 	publishTimerEvent("disableTimer")
 }
 
 func (m *trafficLightMomStruct) startFlashingTimer() {
-	// mom:= TrafficLights[m.clientId]
-	// m.stopper = setInterval(mom.Tick, 1*time.Second)
-	// Call to util server to start timer
+	publishTimerEvent("enableTimer")
 }
 
 func (m *trafficLightMomStruct) stopFlashingTimer() {
-	// m.stopper <- true
-	// Call to util server to stop timer
+	publishTimerEvent("disableTimer")
 }
 
 
@@ -129,13 +113,13 @@ func (m *trafficLightMomStruct) changeFlashingAnimation() {
 	publishResponse("error", color, "false")
 }
 
-func (m *trafficLightMomStruct) loadFromDisk(clientId string) []byte {
+func (m *trafficLightMomStruct) saveInDisk(data []byte)  {
+	fmt.Println("saveInDisk")
+	setInRedis(string(data))
+}
+
+func (m *trafficLightMomStruct) loadFromDisk() []byte {
 	fmt.Println("loadFromDisk")
-	// fileName := GetFileName(clientId)
-	// savedData, err1 := os.ReadFile(fileName)
-	// if err1 != nil {
-	// 	panic(err1)
-	// }
-	return []byte("testing")
-	// return savedData
+	var data []byte = getFromRedis()
+	return data
 }

@@ -19,30 +19,13 @@ type PubSubMessage struct {
 }
 
 func EntryPoint(ctx context.Context, m PubSubMessage) error {
-	log.Println("Client ID ->", m.Attributes.ClientID)
-
-
-	var err error
-	redisPool, err = initializeRedis()
-	if err != nil {
-			log.Printf("initializeRedis: %v", err)
-	}
 
 	trafficLightMom := NewTrafficLightMom()
-	setUserID(m.Attributes.ClientID)
-
-	conn := redisPool.Get()
-	defer conn.Close()
-
-	counter, err := conn.Do("APPEND", "test", "value")
-	if err != nil {
-			log.Printf("redis.Int: %v", err)
-	}
-
-	log.Println("counter", counter)
-
-	log.Println("trafficLightMom", trafficLightMom)
+	var userID string = m.Attributes.ClientID
 	var event string = m.Attributes.Event
+
+	log.Println("Client ID ->", userID, ", Event ->", event)
+	setUserID(userID)
 
 	if event == "init" {
 		trafficLightMom.Init()
@@ -53,7 +36,7 @@ func EntryPoint(ctx context.Context, m PubSubMessage) error {
 	} else if event == "restart" {
 		trafficLightMom.SystemRestart()
 	} else if event == "end" {
-		trafficLightMom.Stop()
+		trafficLightMom.End()
 	}
 	
 	return nil
