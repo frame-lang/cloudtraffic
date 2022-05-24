@@ -28,20 +28,7 @@ function App() {
   const [state, setState] = useState({});
 
   const reconnect = () => {
-    console.log('#####');
     window.location.reload(false);
-
-    // const {
-    //   sendMessageNew,
-    //   lastMessageNew,
-    //   readyStateNew,
-    // } = useWebSocket(socketUrl);
-
-    // sendMessage = sendMessageNew;
-    // lastMessage = lastMessageNew;
-    // readyState = readyStateNew;
-
-    // sendMessage('start')
   }
 
   useEffect(() => {

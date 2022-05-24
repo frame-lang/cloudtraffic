@@ -9,7 +9,7 @@ import (
 
 var Users = make(map[string]*Client)
 
-func AddUser (ID string, user *Client) {
+func AddUser(ID string, user *Client) {
 	Users[ID] = user
 	log.Println("Users", Users)
 }
@@ -21,7 +21,7 @@ func setInterval(p func(string), interval time.Duration, userID string) chan<- b
 		for {
 			select {
 			case <-stopIt:
-				log.Println("stop setInterval")
+				log.Println("Stopped Timer")
 				return
 			case <-ticker.C:
 				p(userID)

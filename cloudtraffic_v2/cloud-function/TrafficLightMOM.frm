@@ -6,7 +6,7 @@ import (
 )
 ```
 
-#TrafficLightMom
+#TrafficLightMom >[isInit:bool]
 
     -interface-
 
@@ -31,7 +31,8 @@ import (
     -machine-
 
     $Entry => $TrafficLightApi
-        |>|
+        |>|[isInit:bool] 
+            isInit ? ^ ::
             var savedData = loadFromDisk()
             trafficLight = LoadTrafficLight(# savedData) ^
         |init|

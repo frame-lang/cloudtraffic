@@ -2,7 +2,7 @@
 // get include files at https://github.com/frame-lang/frame-ancillary-files
 package trafficlight
 
-func NewTrafficLightMom() TrafficLightMom {
+func NewTrafficLightMom(isInit bool) TrafficLightMom {
     m := &trafficLightMomStruct{}
     
     // Validate interfaces
@@ -14,7 +14,9 @@ func NewTrafficLightMom() TrafficLightMom {
     m.trafficLight = nil
     
     // Send system start event
-    e := FrameEvent{Msg:">"}
+    params := make(map[string]interface{})
+    params["isInit"] = isInit
+    e := FrameEvent{Msg:">", Params:params}
     m._mux_(&e)
     return m
 }
@@ -193,6 +195,9 @@ func (m *trafficLightMomStruct) _mux_(e *FrameEvent) {
 func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
     switch e.Msg {
     case ">":
+        if e.Params["isInit"].(bool) {
+            return
+        }
         var savedData  = m.loadFromDisk()
         m.trafficLight = LoadTrafficLight(m,savedData)
         return

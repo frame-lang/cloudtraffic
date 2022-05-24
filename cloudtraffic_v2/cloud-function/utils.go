@@ -11,17 +11,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-type StateResponse struct {
-	Name    string `json:"name"`
-	Message string `json:"message"`
-	Loading string   `json:"loading"`
-}
-
-type ResponseMessage struct {
-	Data       []byte            `json:"data"`
-	Attributes StateResponse `json:"attributes"`
-}
-
 var (
 	topic *pubsub.Topic
 	client *pubsub.Client
@@ -75,11 +64,12 @@ func publishResponse(state string, message string, loading string) {
 	fmt.Println("Published a message; msg ID: ", id)
 }
 
-func publishTimerEvent(eventName string) {
+func publishTimerEvent(eventName string, timerType string) {
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte(eventName),
 		Attributes: map[string]string {
 			"UserID": userID,
+			"TimerType": timerType,
 		},
 	})
 	// Block until the result is returned and a server-generated

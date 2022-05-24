@@ -51,7 +51,13 @@ func PullMsgs() {
 		
 		if string(msg.Data) == "enableTimer" {
 			log.Println("enableTimer")
-			activeUser.Stopper = setInterval(tick, 10*time.Second, userID)
+
+			timerType := msg.Attributes["TimerType"]
+			if timerType == "workingTimer" {
+				activeUser.Stopper = setInterval(tick, 8*time.Second, userID)
+			} else if timerType == "flashingTimer" {
+				activeUser.Stopper = setInterval(tick, 4*time.Second, userID)
+			}
 			return
 		}
 

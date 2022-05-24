@@ -1,7 +1,6 @@
 package trafficlight
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -66,7 +65,6 @@ func (m *trafficLightMomStruct) initTrafficLight() {
 }
 
 func (m *trafficLightMomStruct) destroyTrafficLight() {
-	fmt.Println("destroyTrafficLight")
 	publishResponse("end", "", "false")
 }
 
@@ -91,20 +89,19 @@ func (m *trafficLightMomStruct) enterFlashingRed() {
 }
 
 func (m *trafficLightMomStruct) startWorkingTimer() {
-	publishTimerEvent("enableTimer")
+	publishTimerEvent("enableTimer", "workingTimer")
 }
 
 func (m *trafficLightMomStruct) stopWorkingTimer() {
-	fmt.Println("stopWorkingTimer disableTimer")
-	publishTimerEvent("disableTimer")
+	publishTimerEvent("disableTimer", "workingTimer")
 }
 
 func (m *trafficLightMomStruct) startFlashingTimer() {
-	publishTimerEvent("enableTimer")
+	publishTimerEvent("enableTimer", "flashingTimer")
 }
 
 func (m *trafficLightMomStruct) stopFlashingTimer() {
-	publishTimerEvent("disableTimer")
+	publishTimerEvent("disableTimer", "flashingTimer")
 }
 
 
@@ -114,12 +111,10 @@ func (m *trafficLightMomStruct) changeFlashingAnimation() {
 }
 
 func (m *trafficLightMomStruct) saveInDisk(data []byte)  {
-	fmt.Println("saveInDisk")
 	setInRedis(string(data))
 }
 
 func (m *trafficLightMomStruct) loadFromDisk() []byte {
-	fmt.Println("loadFromDisk")
 	var data []byte = getFromRedis()
 	return data
 }
