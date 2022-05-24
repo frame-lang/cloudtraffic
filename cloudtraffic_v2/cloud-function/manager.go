@@ -1,5 +1,3 @@
-// emitted from framec_v0.8.0
-// get include files at https://github.com/frame-lang/frame-ancillary-files
 package trafficlight
 
 func NewTrafficLightMom(isInit bool) TrafficLightMom {
@@ -8,15 +6,16 @@ func NewTrafficLightMom(isInit bool) TrafficLightMom {
     // Validate interfaces
     var _ TrafficLightMom = m
     var _ TrafficLightMom_actions = m
-    m._compartment_ = NewTrafficLightMomCompartment(TrafficLightMomState_Entry)
     
-    // Initialize domain
+    // Create and intialize start state compartment.
+    m._compartment_ = NewTrafficLightMomCompartment(TrafficLightMomState_Entry)
+    m._compartment_.EnterArgs["isInit"] = isInit
+    
+    // Override domain variables.
     m.trafficLight = nil
     
     // Send system start event
-    params := make(map[string]interface{})
-    params["isInit"] = isInit
-    e := FrameEvent{Msg:">", Params:params}
+    e := FrameEvent{Msg:">", Params:m._compartment_.EnterArgs}
     m._mux_(&e)
     return m
 }
@@ -62,8 +61,8 @@ type TrafficLightMom_actions interface {
     initTrafficLight() 
     changeFlashingAnimation() 
     destroyTrafficLight() 
-    saveInDisk(data []byte) 
-    loadFromDisk() []byte
+    setInRedis(data []byte) 
+    getFromRedis() []byte
 }
 
 
@@ -198,7 +197,7 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
         if e.Params["isInit"].(bool) {
             return
         }
-        var savedData  = m.loadFromDisk()
+        var savedData  = m.getFromRedis()
         m.trafficLight = LoadTrafficLight(m,savedData)
         return
     case "init":
@@ -241,7 +240,7 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Save_(e *FrameEvent) {
     switch e.Msg {
     case ">":
         var jsonData  = m.trafficLight.Marshal()
-        m.saveInDisk(jsonData)
+        m.setInRedis(jsonData)
         m.trafficLight = nil
         return
     }
@@ -315,8 +314,8 @@ func (m *trafficLightMomStruct) stopFlashingTimer()  {}
 func (m *trafficLightMomStruct) initTrafficLight()  {}
 func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
 func (m *trafficLightMomStruct) destroyTrafficLight()  {}
-func (m *trafficLightMomStruct) saveInDisk(data []byte)  {}
-func (m *trafficLightMomStruct) loadFromDisk() []byte {}
+func (m *trafficLightMomStruct) setInRedis(data []byte)  {}
+func (m *trafficLightMomStruct) getFromRedis() []byte {}
 
 ********************************************************/
 

@@ -2,6 +2,9 @@ package trafficlight
 
 import (
 	"time"
+	"log"
+
+	"github.com/gomodule/redigo/redis"
 )
 
 func (m *trafficLightStruct) initTrafficLight() {
@@ -110,11 +113,26 @@ func (m *trafficLightMomStruct) changeFlashingAnimation() {
 	publishResponse("error", color, "false")
 }
 
-func (m *trafficLightMomStruct) saveInDisk(data []byte)  {
-	setInRedis(string(data))
+func (m *trafficLightMomStruct) getFromRedis() []byte {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	data, err := redis.String(conn.Do("GET", userID))
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("Data Received from Redis for User ", userID, "->", data)
+
+	return []byte(data)
 }
 
-func (m *trafficLightMomStruct) loadFromDisk() []byte {
-	var data []byte = getFromRedis()
-	return data
+func (m *trafficLightMomStruct) setInRedis(data []byte) {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SET", userID, string(data))
+	if err != nil {
+			log.Printf("redis.Int: %v", err)
+	}
+	log.Println("Worflow saved to Redis for User ID", userID, ".")
 }

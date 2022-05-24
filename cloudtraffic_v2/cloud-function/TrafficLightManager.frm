@@ -33,7 +33,7 @@ import (
     $Entry => $TrafficLightApi
         |>|[isInit:bool] 
             isInit ? ^ ::
-            var savedData = loadFromDisk()
+            var savedData = getFromRedis()
             trafficLight = LoadTrafficLight(# savedData) ^
         |init|
             trafficLight = NewTrafficLight(#)
@@ -51,7 +51,7 @@ import (
     $Save
         |>|
             var jsonData = trafficLight.Marshal() 
-            saveInDisk(jsonData)
+            setInRedis(jsonData)
             trafficLight = nil ^
 
     $TrafficLightApi
@@ -80,8 +80,8 @@ import (
     initTrafficLight
     changeFlashingAnimation
     destroyTrafficLight
-    saveInDisk [data:`[]byte`]
-    loadFromDisk: `[]byte`
+    setInRedis [data:`[]byte`]
+    getFromRedis: `[]byte`
 
     -domain-
 

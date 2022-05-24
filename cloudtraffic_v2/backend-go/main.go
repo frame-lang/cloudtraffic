@@ -8,6 +8,12 @@ import (
 	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/websocket"
 )
 
+func main() {
+	fmt.Println("Traffic Light App V2 v0.1.0")
+	setupRoutes()
+	log.Fatal(http.ListenAndServe(":8000", nil))
+}
+
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	fmt.Println("WebSocket Endpoint Hit")
 	conn, err := websocket.Upgrade(w, r)
@@ -35,17 +41,4 @@ func setupRoutes() {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(pool, w, r)
 	})
-}
-
-func main() {
-	fmt.Println("Traffic Light App V2 v0.1.0")
-
-	// Create a directory to store saved data (only if not exists currently)
-	// trafficlight.CreateDataDirIfNotExists()
-
-	// If any data available (any file exists), remove all those
-	// trafficlight.RemoveContents("../data")
-
-	setupRoutes()
-	log.Fatal(http.ListenAndServe(":8000", nil))
 }
