@@ -23,7 +23,7 @@ export default function Header({
             <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Traffic Light App
+                    Traffic Light App V2
                 </Typography>
 
                 <Box sx={{ '& > button': { m: 1 } }}>

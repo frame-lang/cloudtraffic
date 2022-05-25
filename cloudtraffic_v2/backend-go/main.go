@@ -11,7 +11,7 @@ import (
 func main() {
 	fmt.Println("Traffic Light App V2 v0.1.0")
 	setupRoutes()
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {

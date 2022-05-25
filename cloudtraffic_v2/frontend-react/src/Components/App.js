@@ -7,7 +7,7 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 
-const socketUrl = `ws://${window.location.hostname}:8000/ws`;
+const socketUrl = `ws://${window.location.hostname}:9000/ws`;
 
 function App() {
 
