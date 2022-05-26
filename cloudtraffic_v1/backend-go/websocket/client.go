@@ -3,7 +3,7 @@ package websocket
 import (
 	"log"
 
-	"github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
+	"github.com/frame-lang/cloudtraffic/cloudtraffic_v1/trafficlight"
 )
 
 func (c *Client) Read() {

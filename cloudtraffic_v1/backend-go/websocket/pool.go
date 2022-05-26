@@ -5,7 +5,7 @@ import (
     "os"
     "log"
 
-    "github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
+    "github.com/frame-lang/cloudtraffic/cloudtraffic_v1/trafficlight"
 )
 
 func NewPool() *Pool {

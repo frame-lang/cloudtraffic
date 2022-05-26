@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/frame-lang/frame-demos/persistenttrafficlight/trafficlight"
-	"github.com/frame-lang/frame-demos/persistenttrafficlight/websocket"
+	"github.com/frame-lang/cloudtraffic/cloudtraffic_v1/trafficlight"
+	"github.com/frame-lang/cloudtraffic/cloudtraffic_v1/websocket"
 )
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {

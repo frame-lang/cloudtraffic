@@ -1,4 +1,4 @@
-module github.com/frame-lang/frame-demos/persistenttrafficlight
+module github.com/frame-lang/cloudtraffic/cloudtraffic_v1
 
 go 1.17
 

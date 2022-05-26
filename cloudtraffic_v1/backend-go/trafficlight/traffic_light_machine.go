@@ -5,7 +5,7 @@ package trafficlight
 import (
 	"encoding/json"
 
-	"github.com/frame-lang/frame-demos/persistenttrafficlight/framelang"
+	"github.com/frame-lang/cloudtraffic/cloudtraffic_v1/framelang"
 )
 
 type TrafficLightState uint

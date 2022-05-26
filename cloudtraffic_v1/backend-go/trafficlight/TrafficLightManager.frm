@@ -2,12 +2,12 @@
 package trafficlight
 
 import (
-	"github.com/frame-lang/frame-demos/persistenttrafficlight/framelang"
+	"github.com/frame-lang/cloudtraffic/cloudtraffic_v1/framelang"
 	"github.com/gorilla/websocket"
 )
 ```
 
-#TrafficLightMom[clntId: string conn: `*websocket.Conn`]
+#TrafficLightMom[clientId: string connection: `*websocket.Conn`]
 
     -interface-
 
@@ -103,7 +103,7 @@ import (
     -domain-
 
     var trafficLight:TrafficLight = null
-    var connection:`*websocket.Conn` = conn
-    var clientId:string = clntId
+    var connection:`*websocket.Conn` = connection
+    var clientId:string = clientId
     var stopper:`chan<- bool` = null
 ##

@@ -31,7 +31,7 @@ else
     sudo touch $SERVICEFILE
     sudo echo "
     [Unit]
-    Description=Traffic Light Backend go
+    Description=Traffic Light Backend V1
     [Service]
     Type=simple
     Restart=always
