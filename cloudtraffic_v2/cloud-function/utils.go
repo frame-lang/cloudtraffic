@@ -15,7 +15,7 @@ var (
 	topic *pubsub.Topic
 	client *pubsub.Client
 	ctx context.Context = context.Background()
-	userID string
+	clientID string
     redisPool *redis.Pool
 )
 
@@ -41,15 +41,15 @@ func init() {
 	}
 }
 
-func setUserID(ID string) {
-	userID = ID
+func setClientID(ID string) {
+	clientID = ID
 }
 
 func publishResponse(state string, message string, loading string) {
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte("sendResponse"),
 		Attributes: map[string]string {
-			"UserID": userID,
+			"ClientID": clientID,
 			"Name": state,
 			"Message": message,
 			"Loading":loading,
@@ -68,7 +68,7 @@ func publishTimerEvent(eventName string, timerType string) {
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte(eventName),
 		Attributes: map[string]string {
-			"UserID": userID,
+			"ClientID": clientID,
 			"TimerType": timerType,
 		},
 	})

@@ -19,20 +19,19 @@ type PubSubMessage struct {
 }
 
 func EntryPoint(ctx context.Context, m PubSubMessage) error {
-	var userID string = m.Attributes.ClientID
+	var clientID string = m.Attributes.ClientID
 	var event string = m.Attributes.Event
 	var isInit bool = false
-	log.Println("Client ID ->", userID, ", Event ->", event)
-	setUserID(userID)
+	log.Println("Client ID ->", clientID, ", Event ->", event)
+	setClientID(clientID)
 
 	if event == "init" {
 		isInit = true
 	}
+
 	trafficLightMom := NewTrafficLightMom(isInit)
 
-	if event == "init" {
-		trafficLightMom.Init()
-	} else if event == "tick" {
+	if event == "tick" {
 		trafficLightMom.Tick()
 	} else if event == "error" {
 		trafficLightMom.SystemError()

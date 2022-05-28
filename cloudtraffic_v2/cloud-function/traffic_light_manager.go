@@ -32,7 +32,6 @@ const (
 type TrafficLightMom interface {
     InitTrafficLight() 
     Tick() 
-    Init() 
     End() 
     EnterRed() 
     EnterGreen() 
@@ -81,11 +80,6 @@ func (m *trafficLightMomStruct) InitTrafficLight()  {
 
 func (m *trafficLightMomStruct) Tick()  {
     e := FrameEvent{Msg:"tick"}
-    m._mux_(&e)
-}
-
-func (m *trafficLightMomStruct) Init()  {
-    e := FrameEvent{Msg:"init"}
     m._mux_(&e)
 }
 
@@ -195,17 +189,17 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
     switch e.Msg {
     case ">":
         if e.Params["isInit"].(bool) {
+            m.trafficLight = NewTrafficLight(m)
+            m.trafficLight.Start()
+            // Saving
+            compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
+            m._transition_(compartment)
+            return
+        } else {
+            var savedData  = m.getFromRedis()
+            m.trafficLight = LoadTrafficLight(m,savedData)
             return
         }
-        var savedData  = m.getFromRedis()
-        m.trafficLight = LoadTrafficLight(m,savedData)
-        return
-    case "init":
-        m.trafficLight = NewTrafficLight(m)
-        m.trafficLight.Start()
-        // Saving
-        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
-        m._transition_(compartment)
         return
     case "tick":
         m.trafficLight.Tick()

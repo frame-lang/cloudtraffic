@@ -12,7 +12,6 @@ import (
 
     initTrafficLight
     tick
-    init
     end
     enterRed
     enterGreen
@@ -32,13 +31,14 @@ import (
 
     $Entry => $TrafficLightApi
         |>|[isInit:bool] 
-            isInit ? ^ ::
-            var savedData = getFromRedis()
-            trafficLight = LoadTrafficLight(# savedData) ^
-        |init|
-            trafficLight = NewTrafficLight(#)
-            trafficLight.Start()
-            -> "Saving" $Save ^
+            isInit? 
+                trafficLight = NewTrafficLight(#)
+                trafficLight.Start()
+                -> "Saving" $Save ^
+            :
+                var savedData = getFromRedis()
+                trafficLight = LoadTrafficLight(# savedData) ^
+            ::^
         |tick|
             trafficLight.Tick() -> "Done" $Save ^
         |systemError|

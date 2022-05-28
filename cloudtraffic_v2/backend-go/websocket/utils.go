@@ -7,14 +7,13 @@ import (
 )
 
 
-var Users = make(map[string]*Client)
+var Clients = make(map[string]*Client)
 
-func AddUser(ID string, user *Client) {
-	Users[ID] = user
-	log.Println("Users", Users)
+func AddClient(ID string, client *Client) {
+	Clients[ID] = client
 }
 
-func setInterval(p func(string), interval time.Duration, userID string) chan<- bool {
+func setInterval(p func(string), interval time.Duration, clientID string) chan<- bool {
 	ticker := time.NewTicker(interval)
 	stopIt := make(chan bool)
 	go func() {
@@ -24,7 +23,7 @@ func setInterval(p func(string), interval time.Duration, userID string) chan<- b
 				log.Println("Stopped Timer")
 				return
 			case <-ticker.C:
-				p(userID)
+				p(clientID)
 			}
 		}
 
@@ -34,17 +33,17 @@ func setInterval(p func(string), interval time.Duration, userID string) chan<- b
 	return stopIt
 }
 
-func tick(userID string) {
-	log.Println("Tick.....", userID)
-	data := createPubSubMsg(userID, "tick")
+func tick(clientID string) {
+	log.Println("Tick.....", clientID)
+	data := createPubSubMsg(clientID, "tick")
 	publishToTLService(data)
 }
 
-func createPubSubMsg(userId string, eventName string) pubsub.Message {
+func createPubSubMsg(clientID string, eventName string) pubsub.Message {
 	return pubsub.Message{
 		Data: []byte("Data from Go Back-end service"),
 		Attributes: map[string]string{
-			"clientID":userId,
+			"clientID": clientID,
 			"event": eventName,
 		},
 	}
