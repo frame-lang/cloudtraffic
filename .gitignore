@@ -13,3 +13,7 @@ yarn-error.log*
 *.code-workspace
 
 **/.DS_Store
+
+# Builds
+/cloudtraffic_v1/backend-go/cloudtraffic_v1
+/cloudtraffic_v2/backend-go/cloudtraffic_v2

@@ -30,7 +30,9 @@ func (pool *Pool) Start() {
 			fmt.Println("Client unregistered, Size of Connection Pool: ", len(pool.Clients))
 			for singleClient, _ := range pool.Clients {
 				if client.ID == singleClient.ID {
-					// *** Event to clear data of user
+					// *** Event to clear data of user and stop timer
+					fmt.Println("Unregistered User ID ->", client.ID)
+					Users[client.ID].Stopper <- true
 					delete(pool.Clients, client)
 				}
 				client.Connection.WriteJSON(Response{

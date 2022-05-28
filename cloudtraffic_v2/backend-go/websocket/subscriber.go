@@ -44,7 +44,6 @@ func PullMsgs() {
 		fmt.Println("***Recieved message*** -> ", string(msg.Data), "\n")
 		userID :=  msg.Attributes["UserID"]
 		var activeUser *Client = Users[userID]
-
 		if activeUser == nil {
 			return
 		}
