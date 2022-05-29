@@ -48,9 +48,7 @@ sudo npm install
 echo "Creating Build..."
 sudo npm run build
 
-sudo chmod -R 777 $FRONTEND_DIR/build
-
-echo "Running FE as a service"
+echo "Running FE as a service..."
 pm2 restart v2 
 pm2 save
 
