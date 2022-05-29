@@ -19,7 +19,7 @@ SERVICEFILE="/lib/systemd/system/trafficlightbackendv2.service"
 if [ -f "$SERVICEFILE" ]; then
 echo "Restarting backend service..."
     systemctl daemon-reload
-    service trafficlightbackendv1 restart
+    service trafficlightbackendv2 restart
 else
     echo "Creating backend service..."
     touch $SERVICEFILE

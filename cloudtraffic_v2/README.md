@@ -11,8 +11,6 @@ This repository contains the source code to demonstrate the Traffic Light wrokfl
 Flow:
 > UI(React app) <-- WebSockets --> Util Service (GO app) <-- Cloud Pub/Sub --> TL service (Cloud function) <-- Serverless VPC Connector --> Redis (Memorystore)
 
----
-
 ## Tech Stack Used
 
 - React
@@ -25,10 +23,7 @@ Flow:
 - Cloud Pub/Sub
 - Serverless VPC Connector
 
----
-
 ## Development/Local Setup
-
 
 ### Pre-requisites
 
@@ -69,8 +64,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=<path-to-json-file>
 ```
 go run main.go
 ```
-
----
 
 ## Deployment
 

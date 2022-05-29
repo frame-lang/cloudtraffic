@@ -3,8 +3,6 @@
 This repository contains the source code to demonstrate the Traffic Light wrokflow. In this initial version, the front-end and back-end communicates with help of web sockets and the traffic light data will get stored in disk storage.
 The data will get stored in a `data/` directory on V1 root level. Data of each user will be stored on seaparate file. The name of the file in `data/` directory is the connectionID of a user. 
 
----
-
 ## Tech Stack Used
 
 - React
@@ -12,10 +10,7 @@ The data will get stored in a `data/` directory on V1 root level. Data of each u
 - WebSockets
 - Frame Lang
 
----
-
 ## Development/Local Setup
-
 
 ### Pre-requisites
 
@@ -51,8 +46,6 @@ go install
 ```
 go run main.go
 ```
-
----
 
 ## Deployment
 
