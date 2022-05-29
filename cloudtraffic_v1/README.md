@@ -58,11 +58,21 @@ go run main.go
 
 1. With Bash Script (Both Front-end and Back-end at once)
 
-```
-curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/cloudtraffic_v1/cloudtraffic-v1-deploy.sh | sh
-```
+    - Switch to Root user
+    ```
+    sudo su
+    ``` 
+    - Run the bash script
+    ```
+    curl -sSf https://raw.githubusercontent.com/frame-lang/cloudtraffic/main/cloudtraffic_v1/cloudtraffic-v1-deploy.sh | sh
+    ```
 
 2. Manual deployment
+
+    Switch to Root user
+    ```
+    sudo su
+    ```
 
     a.  Front-end
 

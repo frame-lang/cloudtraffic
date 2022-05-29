@@ -1,4 +1,4 @@
-#!/usr/bin/sudo sh
+#!/usr/bin/sh
 
 PROJECT_DIR="/root/cloudtraffic"
 BACKEND_DIR="/root/cloudtraffic/cloudtraffic_v2/backend-go"
@@ -18,12 +18,12 @@ SERVICEFILE="/lib/systemd/system/trafficlightbackendv2.service"
 
 if [ -f "$SERVICEFILE" ]; then
 echo "Restarting backend service..."
-    sudo systemctl daemon-reload
-    sudo service trafficlightbackendv1 restart
+    systemctl daemon-reload
+    service trafficlightbackendv1 restart
 else
     echo "Creating backend service..."
-    sudo touch $SERVICEFILE
-    sudo echo "
+    touch $SERVICEFILE
+    echo "
     [Unit]
     Description=Traffic Light Backend V2
     [Service]
@@ -34,19 +34,19 @@ else
     WorkingDirectory=$BACKEND_DIR
     ExecStart=$BACKEND_DIR/cloudtraffic_v2
     [Install]
-    WantedBy=multi-user.target" | sudo tee -a $SERVICEFILE > /dev/null
-    sudo systemctl daemon-reload
-    sudo service trafficlightbackend restart
-    sudo systemctl enable trafficlightbackend.service
+    WantedBy=multi-user.target" | tee -a $SERVICEFILE > /dev/null
+    systemctl daemon-reload
+    service trafficlightbackend restart
+    systemctl enable trafficlightbackend.service
 fi
 
 cd $FRONTEND_DIR
 echo "Deleting previous frontend build...."
-sudo rm -rf build
+rm -rf build
 echo "Installing Dependencies..."
-sudo npm install
+npm install
 echo "Creating Build..."
-sudo npm run build
+npm run build
 
 echo "Running FE as a service..."
 pm2 restart v2 
