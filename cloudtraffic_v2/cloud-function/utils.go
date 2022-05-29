@@ -3,7 +3,6 @@ package trafficlight
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"errors"
 
@@ -11,45 +10,13 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-var (
-	topic *pubsub.Topic
-	client *pubsub.Client
-	ctx context.Context = context.Background()
-	clientID string
-    redisPool *redis.Pool
-)
-
-func init() {
-	// err is pre-declared to avoid shadowing client.
-	var err error
-
-	// client is initialized with context.Background() because it should
-	// persist between function invocations.
-	client, err = pubsub.NewClient(ctx, os.Getenv("PROJECTID"))
-	if err != nil {
-		log.Fatalf("pubsub.NewClient: %v", err)
-	}
-
-	topic = client.Topic(os.Getenv("TOPICID"))
-
-	// Initialize Redis
-	var redisError error
-	redisPool, redisError = initializeRedis()
-	if redisError != nil {
-			log.Printf("initializeRedis: %v", err)
-			return
-	}
-}
-
-func setClientID(ID string) {
-	clientID = ID
-}
+var ctx context.Context = context.Background()
 
 func publishResponse(state string, message string, loading string) {
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte("sendResponse"),
 		Attributes: map[string]string {
-			"ClientID": clientID,
+			"ConnectionID": connectionID,
 			"Name": state,
 			"Message": message,
 			"Loading":loading,
@@ -68,7 +35,7 @@ func publishTimerEvent(eventName string, timerType string) {
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte(eventName),
 		Attributes: map[string]string {
-			"ClientID": clientID,
+			"ConnectionID": connectionID,
 			"TimerType": timerType,
 		},
 	})

@@ -4,12 +4,14 @@ package trafficlight
 import (
 	"context"
 	"log"
+	"os"
+
+	"cloud.google.com/go/pubsub"
+	"github.com/gomodule/redigo/redis"
 )
 
-// PubSubMessage is the payload of a Pub/Sub event. Please refer to the docs for
-// additional information regarding Pub/Sub events.
 type AttributeType struct {
-	ClientID string `json:"clientID"`
+	ConnectionID string `json:"connectionID"`
 	Event string `json:"event"`
 }
 
@@ -18,12 +20,40 @@ type PubSubMessage struct {
 	Attributes AttributeType `json:"attributes"`
 }
 
+var (
+	topic *pubsub.Topic
+	client *pubsub.Client
+	connectionID string
+    redisPool *redis.Pool
+)
+
+func init() {
+	// err is pre-declared to avoid shadowing client.
+	var err error
+
+	// client is initialized with context.Background() because it should
+	// persist between function invocations.
+	client, err = pubsub.NewClient(ctx, os.Getenv("PROJECTID"))
+	if err != nil {
+		log.Fatalf("pubsub.NewClient: %v", err)
+	}
+
+	topic = client.Topic(os.Getenv("TOPICID"))
+
+	// Initialize Redis
+	var redisError error
+	redisPool, redisError = initializeRedis()
+	if redisError != nil {
+			log.Printf("initializeRedis: %v", err)
+			return
+	}
+}
+
 func EntryPoint(ctx context.Context, m PubSubMessage) error {
-	var clientID string = m.Attributes.ClientID
+	connectionID = m.Attributes.ConnectionID
 	var event string = m.Attributes.Event
 	var isInit bool = false
-	log.Println("Client ID ->", clientID, ", Event ->", event)
-	setClientID(clientID)
+	log.Println("Connection ID ->", connectionID, ", Event ->", event)
 
 	if event == "init" {
 		isInit = true

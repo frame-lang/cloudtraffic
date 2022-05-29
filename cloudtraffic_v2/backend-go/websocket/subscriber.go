@@ -42,8 +42,8 @@ func PullMsgs() {
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
 		fmt.Println("***Recieved message*** -> ", string(msg.Data), "\n")
-		clientID :=  msg.Attributes["ClientID"]
-		var activeUser *Client = Clients[clientID]
+		connectionID :=  msg.Attributes["ConnectionID"]
+		var activeUser *Client = Clients[connectionID]
 		if activeUser == nil {
 			return
 		}
@@ -53,9 +53,9 @@ func PullMsgs() {
 
 			timerType := msg.Attributes["TimerType"]
 			if timerType == "workingTimer" {
-				activeUser.Stopper = setInterval(tick, 8*time.Second, clientID)
+				activeUser.Stopper = setInterval(tick, 8*time.Second, connectionID)
 			} else if timerType == "flashingTimer" {
-				activeUser.Stopper = setInterval(tick, 4*time.Second, clientID)
+				activeUser.Stopper = setInterval(tick, 4*time.Second, connectionID)
 			}
 			return
 		}

@@ -62,11 +62,11 @@ func (m *trafficLightMomStruct) getFromRedis() []byte {
 	conn := redisPool.Get()
 	defer conn.Close()
 
-	data, err := redis.String(conn.Do("GET", clientID))
+	data, err := redis.String(conn.Do("GET", connectionID))
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("Data Received from Redis for User ", clientID, "->", data)
+	log.Println("Data Received from Redis for User ", connectionID, "->", data)
 
 	return []byte(data)
 }
@@ -75,9 +75,9 @@ func (m *trafficLightMomStruct) setInRedis(data []byte) {
 	conn := redisPool.Get()
 	defer conn.Close()
 
-	_, err := conn.Do("SET", clientID, string(data))
+	_, err := conn.Do("SET", connectionID, string(data))
 	if err != nil {
 			log.Printf("redis.Int: %v", err)
 	}
-	log.Println("Worflow saved to Redis for User ID", clientID, ".")
+	log.Println("Worflow saved to Redis for User ID", connectionID, ".")
 }
