@@ -5,6 +5,8 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
+	"time"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gomodule/redigo/redis"
@@ -25,9 +27,14 @@ var (
 	client *pubsub.Client
 	connectionID string
     redisPool *redis.Pool
+	cloudFunctionID string
 )
 
 func init() {
+	// For testing
+	cloudFunctionID = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	log.Println("A new cloud function is being inilialized: ", cloudFunctionID)
+
 	// err is pre-declared to avoid shadowing client.
 	var err error
 
@@ -53,7 +60,7 @@ func EntryPoint(ctx context.Context, m PubSubMessage) error {
 	connectionID = m.Attributes.ConnectionID
 	var event string = m.Attributes.Event
 	var isInit bool = false
-	log.Println("Connection ID ->", connectionID, ", Event ->", event)
+	log.Println("Connection ID ->", connectionID, ", Event ->", event, "Cloud function ID ->", cloudFunctionID)
 
 	if event == "init" {
 		isInit = true

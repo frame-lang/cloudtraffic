@@ -53,9 +53,9 @@ func PullMsgs() {
 
 			timerType := msg.Attributes["TimerType"]
 			if timerType == "workingTimer" {
-				activeUser.Stopper = setInterval(tick, 8*time.Second, connectionID)
+				activeUser.Stopper = setInterval(tick, 3*time.Second, connectionID)
 			} else if timerType == "flashingTimer" {
-				activeUser.Stopper = setInterval(tick, 4*time.Second, connectionID)
+				activeUser.Stopper = setInterval(tick, 2*time.Second, connectionID)
 			}
 			return
 		}

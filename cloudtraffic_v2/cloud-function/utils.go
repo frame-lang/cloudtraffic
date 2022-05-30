@@ -28,7 +28,7 @@ func publishResponse(state string, message string, loading string) {
 	if err != nil {
 		fmt.Errorf("Get: %v", err)
 	}
-	fmt.Println("Published a message; msg ID: ", id)
+	fmt.Println("Published a message to Utils service; msg ID: ", id)
 }
 
 func publishTimerEvent(eventName string, timerType string) {
