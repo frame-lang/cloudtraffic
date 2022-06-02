@@ -1,46 +1,46 @@
 package trafficlight
 
 func (m *trafficLightStruct) initTrafficLight() {
-	m.mom.InitTrafficLight()
+	m._manager_.InitTrafficLight()
 }
 
 func (m *trafficLightStruct) destroyTrafficLight() {
-	m.mom.DestroyTrafficLight()
+	m._manager_.DestroyTrafficLight()
 }
 
 func (m *trafficLightStruct) enterRed() {
 	m.ChangeColor("red")
-	m.mom.EnterRed()
+	m._manager_.EnterRed()
 }
 
 func (m *trafficLightStruct) enterGreen() {
 	m.ChangeColor("green")
-	m.mom.EnterGreen()
+	m._manager_.EnterGreen()
 }
 
 func (m *trafficLightStruct) enterYellow() {
 	m.ChangeColor("yellow")
-	m.mom.EnterYellow()
+	m._manager_.EnterYellow()
 }
 
 func (m *trafficLightStruct) enterFlashingRed() {
 	m.ChangeColor("red")
-	m.mom.EnterFlashingRed()
+	m._manager_.EnterFlashingRed()
 }
 
 func (m *trafficLightStruct) startWorkingTimer() {
-	m.mom.StartWorkingTimer()
+	m._manager_.StartWorkingTimer()
 }
 
 func (m *trafficLightStruct) stopWorkingTimer() {
-	m.mom.StopWorkingTimer()
+	m._manager_.StopWorkingTimer()
 }
 
 func (m *trafficLightStruct) startFlashingTimer() {
-	m.mom.StartFlashingTimer()
+	m._manager_.StartFlashingTimer()
 }
 func (m *trafficLightStruct) stopFlashingTimer() {
-	m.mom.StopFlashingTimer()
+	m._manager_.StopFlashingTimer()
 }
 
 func (m *trafficLightStruct) changeFlashingAnimation() {
@@ -52,5 +52,5 @@ func (m *trafficLightStruct) changeFlashingAnimation() {
 	}
 
 	m.ChangeColor(flashColor)
-	m.mom.ChangeFlashingAnimation()
+	m._manager_.ChangeFlashingAnimation()
 }

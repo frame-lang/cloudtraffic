@@ -1,7 +1,6 @@
 package trafficlight
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"errors"
@@ -9,8 +8,6 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/gomodule/redigo/redis"
 )
-
-var ctx context.Context = context.Background()
 
 func publishResponse(state string, message string, loading string) {
 	result := topic.Publish(ctx, &pubsub.Message{

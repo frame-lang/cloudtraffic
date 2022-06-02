@@ -1,15 +1,17 @@
+// emitted from framec_v0.10.0
+// get include files at https://github.com/frame-lang/frame-ancillary-files
 package trafficlight
 
-func NewTrafficLightMom(isInit bool) TrafficLightMom {
-    m := &trafficLightMomStruct{}
+func NewTrafficLightManager(isNewWorkflow bool) TrafficLightManager {
+    m := &trafficLightManagerStruct{}
     
     // Validate interfaces
-    var _ TrafficLightMom = m
-    var _ TrafficLightMom_actions = m
+    var _ TrafficLightManager = m
+    var _ TrafficLightManager_actions = m
     
     // Create and intialize start state compartment.
-    m._compartment_ = NewTrafficLightMomCompartment(TrafficLightMomState_Entry)
-    m._compartment_.EnterArgs["isInit"] = isInit
+    m._compartment_ = NewTrafficLightManagerCompartment(TrafficLightManagerState_Start)
+    m._compartment_.EnterArgs["isNewWorkflow"] = isNewWorkflow
     
     // Override domain variables.
     m.trafficLight = nil
@@ -21,15 +23,20 @@ func NewTrafficLightMom(isInit bool) TrafficLightMom {
 }
 
 
-type TrafficLightMomState uint
+type TrafficLightManagerState uint
 
 const (
-    TrafficLightMomState_Entry TrafficLightMomState = iota
-    TrafficLightMomState_Save
-    TrafficLightMomState_TrafficLightApi
+    TrafficLightManagerState_Start TrafficLightManagerState = iota
+    TrafficLightManagerState_Create
+    TrafficLightManagerState_Load
+    TrafficLightManagerState_Working
+    TrafficLightManagerState_Save
+    TrafficLightManagerState_Stop
+    TrafficLightManagerState_HandleExternalEvents
+    TrafficLightManagerState_HandleControllerEvents
 )
 
-type TrafficLightMom interface {
+type TrafficLightManager interface {
     InitTrafficLight() 
     Tick() 
     End() 
@@ -48,7 +55,7 @@ type TrafficLightMom interface {
     DestroyTrafficLight() 
 }
 
-type TrafficLightMom_actions interface {
+type TrafficLightManager_actions interface {
     enterRed() 
     enterGreen() 
     enterYellow() 
@@ -65,104 +72,114 @@ type TrafficLightMom_actions interface {
 }
 
 
-type trafficLightMomStruct struct {
-    _compartment_ *TrafficLightMomCompartment
-    _nextCompartment_ *TrafficLightMomCompartment
+type trafficLightManagerStruct struct {
+    _compartment_ *TrafficLightManagerCompartment
+    _nextCompartment_ *TrafficLightManagerCompartment
     trafficLight TrafficLight
 }
 
 //===================== Interface Block ===================//
 
-func (m *trafficLightMomStruct) InitTrafficLight()  {
+func (m *trafficLightManagerStruct) InitTrafficLight()  {
     e := FrameEvent{Msg:"initTrafficLight"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) Tick()  {
+func (m *trafficLightManagerStruct) Tick()  {
     e := FrameEvent{Msg:"tick"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) End()  {
+func (m *trafficLightManagerStruct) End()  {
     e := FrameEvent{Msg:"end"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) EnterRed()  {
+func (m *trafficLightManagerStruct) EnterRed()  {
     e := FrameEvent{Msg:"enterRed"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) EnterGreen()  {
+func (m *trafficLightManagerStruct) EnterGreen()  {
     e := FrameEvent{Msg:"enterGreen"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) EnterYellow()  {
+func (m *trafficLightManagerStruct) EnterYellow()  {
     e := FrameEvent{Msg:"enterYellow"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) EnterFlashingRed()  {
+func (m *trafficLightManagerStruct) EnterFlashingRed()  {
     e := FrameEvent{Msg:"enterFlashingRed"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StartWorkingTimer()  {
+func (m *trafficLightManagerStruct) StartWorkingTimer()  {
     e := FrameEvent{Msg:"startWorkingTimer"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StopWorkingTimer()  {
+func (m *trafficLightManagerStruct) StopWorkingTimer()  {
     e := FrameEvent{Msg:"stopWorkingTimer"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StartFlashingTimer()  {
+func (m *trafficLightManagerStruct) StartFlashingTimer()  {
     e := FrameEvent{Msg:"startFlashingTimer"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StopFlashingTimer()  {
+func (m *trafficLightManagerStruct) StopFlashingTimer()  {
     e := FrameEvent{Msg:"stopFlashingTimer"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) StartFlashing()  {
+func (m *trafficLightManagerStruct) StartFlashing()  {
     e := FrameEvent{Msg:"startFlashing"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) ChangeFlashingAnimation()  {
+func (m *trafficLightManagerStruct) ChangeFlashingAnimation()  {
     e := FrameEvent{Msg:"changeFlashingAnimation"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) SystemError()  {
+func (m *trafficLightManagerStruct) SystemError()  {
     e := FrameEvent{Msg:"systemError"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) SystemRestart()  {
+func (m *trafficLightManagerStruct) SystemRestart()  {
     e := FrameEvent{Msg:"systemRestart"}
     m._mux_(&e)
 }
 
-func (m *trafficLightMomStruct) DestroyTrafficLight()  {
+func (m *trafficLightManagerStruct) DestroyTrafficLight()  {
     e := FrameEvent{Msg:"destroyTrafficLight"}
     m._mux_(&e)
 }
 
 //====================== Multiplexer ====================//
 
-func (m *trafficLightMomStruct) _mux_(e *FrameEvent) {
+func (m *trafficLightManagerStruct) _mux_(e *FrameEvent) {
     switch m._compartment_.State {
-    case TrafficLightMomState_Entry:
-        m._TrafficLightMomState_Entry_(e)
-    case TrafficLightMomState_Save:
-        m._TrafficLightMomState_Save_(e)
-    case TrafficLightMomState_TrafficLightApi:
-        m._TrafficLightMomState_TrafficLightApi_(e)
+    case TrafficLightManagerState_Start:
+        m._TrafficLightManagerState_Start_(e)
+    case TrafficLightManagerState_Create:
+        m._TrafficLightManagerState_Create_(e)
+    case TrafficLightManagerState_Load:
+        m._TrafficLightManagerState_Load_(e)
+    case TrafficLightManagerState_Working:
+        m._TrafficLightManagerState_Working_(e)
+    case TrafficLightManagerState_Save:
+        m._TrafficLightManagerState_Save_(e)
+    case TrafficLightManagerState_Stop:
+        m._TrafficLightManagerState_Stop_(e)
+    case TrafficLightManagerState_HandleExternalEvents:
+        m._TrafficLightManagerState_HandleExternalEvents_(e)
+    case TrafficLightManagerState_HandleControllerEvents:
+        m._TrafficLightManagerState_HandleControllerEvents_(e)
     }
     
     if m._nextCompartment_ != nil {
@@ -185,62 +202,110 @@ func (m *trafficLightMomStruct) _mux_(e *FrameEvent) {
 
 //===================== Machine Block ===================//
 
-func (m *trafficLightMomStruct) _TrafficLightMomState_Entry_(e *FrameEvent) {
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Start_(e *FrameEvent) {
     switch e.Msg {
     case ">":
-        if e.Params["isInit"].(bool) {
-            m.trafficLight = NewTrafficLight(m)
-            m.trafficLight.Start()
-            // Saving
-            compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
+        if e.Params["isNewWorkflow"].(bool) {
+            // Create\nWorkflow
+            compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Create)
             m._transition_(compartment)
-            return
         } else {
-            var savedData  = m.getFromRedis()
-            m.trafficLight = LoadTrafficLight(m,savedData)
-            return
+            // Load\nWorkflow
+            compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Load)
+            m._transition_(compartment)
         }
         return
-    case "tick":
-        m.trafficLight.Tick()
-        // Done
-        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
-        m._transition_(compartment)
-        return
-    case "systemError":
-        m.trafficLight.SystemError()
-        // Done
-        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
-        m._transition_(compartment)
-        return
-    case "systemRestart":
-        m.trafficLight.SystemRestart()
-        // Done
-        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
-        m._transition_(compartment)
-        return
-    case "end":
-        m.trafficLight.Stop()
-        // Done
-        compartment := NewTrafficLightMomCompartment(TrafficLightMomState_Save)
-        m._transition_(compartment)
-        return
     }
-    m._TrafficLightMomState_TrafficLightApi_(e)
+    m._TrafficLightManagerState_HandleExternalEvents_(e)
     
 }
 
-func (m *trafficLightMomStruct) _TrafficLightMomState_Save_(e *FrameEvent) {
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Create_(e *FrameEvent) {
+    switch e.Msg {
+    case ">":
+        m.trafficLight = NewTrafficLight(m)
+        m.trafficLight.Start()
+        // Created
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    }
+    m._TrafficLightManagerState_HandleExternalEvents_(e)
+    
+}
+
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Load_(e *FrameEvent) {
+    switch e.Msg {
+    case ">":
+        var savedData  = m.getFromRedis()
+        m.trafficLight = LoadTrafficLight(m,savedData)
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Working)
+        m._changeState_(compartment)
+        return
+    }
+    m._TrafficLightManagerState_HandleExternalEvents_(e)
+    
+}
+
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Working_(e *FrameEvent) {
+    switch e.Msg {
+    }
+    m._TrafficLightManagerState_HandleExternalEvents_(e)
+    
+}
+
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Save_(e *FrameEvent) {
     switch e.Msg {
     case ">":
         var jsonData  = m.trafficLight.Marshal()
         m.setInRedis(jsonData)
         m.trafficLight = nil
+        // Stop
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Stop)
+        m._transition_(compartment)
         return
     }
 }
 
-func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *FrameEvent) {
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_Stop_(e *FrameEvent) {
+    switch e.Msg {
+    }
+    m._TrafficLightManagerState_HandleExternalEvents_(e)
+    
+}
+
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_HandleExternalEvents_(e *FrameEvent) {
+    switch e.Msg {
+    case "tick":
+        m.trafficLight.Tick()
+        // Tick
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    case "systemError":
+        m.trafficLight.SystemError()
+        // System\nError
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    case "systemRestart":
+        m.trafficLight.SystemRestart()
+        // System\nRestart
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    case "end":
+        m.trafficLight.Stop()
+        // End
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    }
+    m._TrafficLightManagerState_HandleControllerEvents_(e)
+    
+}
+
+func (m *trafficLightManagerStruct) _TrafficLightManagerState_HandleControllerEvents_(e *FrameEvent) {
     switch e.Msg {
     case "initTrafficLight":
         m.initTrafficLight()
@@ -280,14 +345,18 @@ func (m *trafficLightMomStruct) _TrafficLightMomState_TrafficLightApi_(e *FrameE
 
 //=============== Machinery and Mechanisms ==============//
 
-func (m *trafficLightMomStruct) _transition_(compartment *TrafficLightMomCompartment) {
+func (m *trafficLightManagerStruct) _transition_(compartment *TrafficLightManagerCompartment) {
     m._nextCompartment_ = compartment
 }
 
-func (m *trafficLightMomStruct) _do_transition_(nextCompartment *TrafficLightMomCompartment) {
+func (m *trafficLightManagerStruct) _do_transition_(nextCompartment *TrafficLightManagerCompartment) {
     m._mux_(&FrameEvent{Msg: "<", Params: m._compartment_.ExitArgs, Ret: nil})
     m._compartment_ = nextCompartment
     m._mux_(&FrameEvent{Msg: ">", Params: m._compartment_.EnterArgs, Ret: nil})
+}
+
+func (m *trafficLightManagerStruct) _changeState_(compartment *TrafficLightManagerCompartment) {
+    m._compartment_ = compartment
 }
 
 //===================== Actions Block ===================//
@@ -297,26 +366,26 @@ func (m *trafficLightMomStruct) _do_transition_(nextCompartment *TrafficLightMom
 
 // Unimplemented Actions
 
-func (m *trafficLightMomStruct) enterRed()  {}
-func (m *trafficLightMomStruct) enterGreen()  {}
-func (m *trafficLightMomStruct) enterYellow()  {}
-func (m *trafficLightMomStruct) enterFlashingRed()  {}
-func (m *trafficLightMomStruct) startWorkingTimer()  {}
-func (m *trafficLightMomStruct) stopWorkingTimer()  {}
-func (m *trafficLightMomStruct) startFlashingTimer()  {}
-func (m *trafficLightMomStruct) stopFlashingTimer()  {}
-func (m *trafficLightMomStruct) initTrafficLight()  {}
-func (m *trafficLightMomStruct) changeFlashingAnimation()  {}
-func (m *trafficLightMomStruct) destroyTrafficLight()  {}
-func (m *trafficLightMomStruct) setInRedis(data []byte)  {}
-func (m *trafficLightMomStruct) getFromRedis() []byte {}
+func (m *trafficLightManagerStruct) enterRed()  {}
+func (m *trafficLightManagerStruct) enterGreen()  {}
+func (m *trafficLightManagerStruct) enterYellow()  {}
+func (m *trafficLightManagerStruct) enterFlashingRed()  {}
+func (m *trafficLightManagerStruct) startWorkingTimer()  {}
+func (m *trafficLightManagerStruct) stopWorkingTimer()  {}
+func (m *trafficLightManagerStruct) startFlashingTimer()  {}
+func (m *trafficLightManagerStruct) stopFlashingTimer()  {}
+func (m *trafficLightManagerStruct) initTrafficLight()  {}
+func (m *trafficLightManagerStruct) changeFlashingAnimation()  {}
+func (m *trafficLightManagerStruct) destroyTrafficLight()  {}
+func (m *trafficLightManagerStruct) setInRedis(data []byte)  {}
+func (m *trafficLightManagerStruct) getFromRedis() []byte {}
 
 ********************************************************/
 
 //=============== Compartment ==============//
 
-type TrafficLightMomCompartment struct {
-    State TrafficLightMomState
+type TrafficLightManagerCompartment struct {
+    State TrafficLightManagerState
     StateArgs map[string]interface{}
     StateVars map[string]interface{}
     EnterArgs map[string]interface{}
@@ -324,8 +393,8 @@ type TrafficLightMomCompartment struct {
     _forwardEvent_ *FrameEvent
 }
 
-func NewTrafficLightMomCompartment(state TrafficLightMomState) *TrafficLightMomCompartment {
-    c := &TrafficLightMomCompartment{State: state}
+func NewTrafficLightManagerCompartment(state TrafficLightManagerState) *TrafficLightManagerCompartment {
+    c := &TrafficLightManagerCompartment{State: state}
     c.StateArgs = make(map[string]interface{})
     c.StateVars = make(map[string]interface{})
     c.EnterArgs = make(map[string]interface{})

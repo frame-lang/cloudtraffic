@@ -6,7 +6,7 @@ import (
 )
 ```
 
-#TrafficLightMom >[isInit:bool]
+#TrafficLightManager >[isNewWorkflow:bool]
 
     -interface-
 
@@ -29,32 +29,49 @@ import (
 
     -machine-
 
-    $Entry => $TrafficLightApi
-        |>|[isInit:bool] 
-            isInit? 
-                trafficLight = NewTrafficLight(#)
-                trafficLight.Start()
-                -> "Saving" $Save ^
-            :
-                var savedData = getFromRedis()
-                trafficLight = LoadTrafficLight(# savedData) ^
-            ::^
-        |tick|
-            trafficLight.Tick() -> "Done" $Save ^
-        |systemError|
-            trafficLight.SystemError() -> "Done" $Save ^
-        |systemRestart|
-            trafficLight.SystemRestart() -> "Done" $Save ^
-        |end|
-            trafficLight.Stop() -> "Done" $Save ^
+    $Start => $HandleExternalEvents
+        |>|[isNewWorkflow:bool] 
+            isNewWorkflow ? 
+            	-> "Create\nWorkflow" $Create 
+            : 
+            	-> "Load\nWorkflow" $Load 
+            :: ^
 
+	$Create => $HandleExternalEvents
+    	|>|
+            trafficLight = NewTrafficLight(#)
+            trafficLight.Start() 
+             -> "Created" $Save ^
+            
+    $Load => $HandleExternalEvents
+    	|>|
+            var savedData = getFromRedis()
+            trafficLight = LoadTrafficLight(# savedData)
+            ->> "Loaded" $Working ^
+ 
+ 	$Working => $HandleExternalEvents
+    
     $Save
         |>|
             var jsonData = trafficLight.Marshal() 
             setInRedis(jsonData)
-            trafficLight = nil ^
+            trafficLight = nil 
+            -> "Stop" $Stop ^
+            
+    $Stop => $HandleExternalEvents
 
-    $TrafficLightApi
+        
+    $HandleExternalEvents => $HandleControllerEvents
+        |tick|
+            trafficLight.Tick() -> "Tick" $Save ^
+        |systemError|
+            trafficLight.SystemError() -> "System\nError" $Save ^
+        |systemRestart|
+            trafficLight.SystemRestart() -> "System\nRestart" $Save ^
+        |end|
+            trafficLight.Stop() -> "End" $Save ^
+ 
+    $HandleControllerEvents
         |initTrafficLight| initTrafficLight() ^
         |enterRed| enterRed() ^
         |enterGreen| enterGreen()  ^

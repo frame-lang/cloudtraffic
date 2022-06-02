@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"time"
-
 	"cloud.google.com/go/pubsub"
 	"github.com/gomodule/redigo/redis"
 )
@@ -28,6 +27,7 @@ var (
 	connectionID string
     redisPool *redis.Pool
 	cloudFunctionID string
+	ctx context.Context = context.Background()
 )
 
 func init() {
@@ -56,26 +56,26 @@ func init() {
 	}
 }
 
-func EntryPoint(ctx context.Context, m PubSubMessage) error {
+func EntryPoint(_ctx context.Context, m PubSubMessage) error {
 	connectionID = m.Attributes.ConnectionID
 	var event string = m.Attributes.Event
-	var isInit bool = false
+	var isNewWorkflow bool = false
 	log.Println("Connection ID ->", connectionID, ", Event ->", event, "Cloud function ID ->", cloudFunctionID)
 
 	if event == "init" {
-		isInit = true
+		isNewWorkflow = true
 	}
 
-	trafficLightMom := NewTrafficLightMom(isInit)
+	trafficLightManager := NewTrafficLightManager(isNewWorkflow)
 
 	if event == "tick" {
-		trafficLightMom.Tick()
+		trafficLightManager.Tick()
 	} else if event == "error" {
-		trafficLightMom.SystemError()
+		trafficLightManager.SystemError()
 	} else if event == "restart" {
-		trafficLightMom.SystemRestart()
+		trafficLightManager.SystemRestart()
 	} else if event == "end" {
-		trafficLightMom.End()
+		trafficLightManager.End()
 	}
 	
 	return nil

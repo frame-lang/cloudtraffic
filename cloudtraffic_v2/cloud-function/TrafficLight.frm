@@ -7,8 +7,9 @@ import (
 	"github.com/frame-lang/cloudtraffic/cloudtraffic_v2/framelang"
 )
 ```
-#[derive(Managed,Marshal)]
-#[mom="TrafficLightMom"]
+#[derive(Marshal)]
+#[managed(TrafficLightManager)]
+
 #TrafficLight
 
     -interface-

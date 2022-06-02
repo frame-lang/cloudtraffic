@@ -7,58 +7,58 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-func (m *trafficLightMomStruct) initTrafficLight() {
+func (m *trafficLightManagerStruct) initTrafficLight() {
 	publishResponse("begin", "", "true")
 	time.Sleep(2 * time.Second)
 }
 
-func (m *trafficLightMomStruct) destroyTrafficLight() {
+func (m *trafficLightManagerStruct) destroyTrafficLight() {
 	publishResponse("end", "", "false")
 }
 
-func (m *trafficLightMomStruct) enterRed() {
+func (m *trafficLightManagerStruct) enterRed() {
 	color := m.trafficLight.GetColor()
 	publishResponse("working", color, "false")
 }
 
-func (m *trafficLightMomStruct) enterGreen() {
+func (m *trafficLightManagerStruct) enterGreen() {
 	color := m.trafficLight.GetColor()
 	publishResponse("working", color, "false")
 }
 
-func (m *trafficLightMomStruct) enterYellow() {
+func (m *trafficLightManagerStruct) enterYellow() {
 	color := m.trafficLight.GetColor()
 	publishResponse("working", color, "false")
 }
 
-func (m *trafficLightMomStruct) enterFlashingRed() {
+func (m *trafficLightManagerStruct) enterFlashingRed() {
 	color := m.trafficLight.GetColor()
 	publishResponse("error", color, "false")
 }
 
-func (m *trafficLightMomStruct) startWorkingTimer() {
+func (m *trafficLightManagerStruct) startWorkingTimer() {
 	publishTimerEvent("enableTimer", "workingTimer")
 }
 
-func (m *trafficLightMomStruct) stopWorkingTimer() {
+func (m *trafficLightManagerStruct) stopWorkingTimer() {
 	publishTimerEvent("disableTimer", "workingTimer")
 }
 
-func (m *trafficLightMomStruct) startFlashingTimer() {
+func (m *trafficLightManagerStruct) startFlashingTimer() {
 	publishTimerEvent("enableTimer", "flashingTimer")
 }
 
-func (m *trafficLightMomStruct) stopFlashingTimer() {
+func (m *trafficLightManagerStruct) stopFlashingTimer() {
 	publishTimerEvent("disableTimer", "flashingTimer")
 }
 
 
-func (m *trafficLightMomStruct) changeFlashingAnimation() {
+func (m *trafficLightManagerStruct) changeFlashingAnimation() {
 	color := m.trafficLight.GetColor()
 	publishResponse("error", color, "false")
 }
 
-func (m *trafficLightMomStruct) getFromRedis() []byte {
+func (m *trafficLightManagerStruct) getFromRedis() []byte {
 	conn := redisPool.Get()
 	defer conn.Close()
 
@@ -71,13 +71,14 @@ func (m *trafficLightMomStruct) getFromRedis() []byte {
 	return []byte(data)
 }
 
-func (m *trafficLightMomStruct) setInRedis(data []byte) {
+func (m *trafficLightManagerStruct) setInRedis(data []byte) {
 	conn := redisPool.Get()
 	defer conn.Close()
 
 	_, err := conn.Do("SET", connectionID, string(data))
 	if err != nil {
-			log.Printf("redis.Int: %v", err)
+		log.Printf("Error while saving TL Data in Redis: %v", err)
+		return
 	}
 	log.Println("Worflow saved to Redis for User ID", connectionID, ".")
 }
