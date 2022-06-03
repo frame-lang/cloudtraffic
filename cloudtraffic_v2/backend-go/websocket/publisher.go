@@ -2,17 +2,18 @@ package websocket
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"cloud.google.com/go/pubsub"
 )
 
-func publishToTLService(data pubsub.Message) error {
-	fmt.Println("Publishing to TL service ->", data)
+// Publish events to Cloud function (Traffic Light service) via Cloud PubSub
+func publishToTLService(data pubsub.Message, eventName string) {
+	log.Println("👉🏻 Publishing to TL service ->", eventName)
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
-		return fmt.Errorf("pubsub.NewClient: %v", err)
+		log.Println("Error while creating connection to Cloud PubSub ->", err)
 	}
 	defer client.Close()
 
@@ -20,11 +21,8 @@ func publishToTLService(data pubsub.Message) error {
 	result := t.Publish(ctx, &data)
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.
-	id, err := result.Get(ctx)
+	_, err = result.Get(ctx)
 	if err != nil {
-			return fmt.Errorf("Get: %v", err)
+			log.Println("Error while publishing data to Cloud PubSub ->", err)
 	}
-	fmt.Println("Published a message; msg ID: ", id)
-	return nil
-	return nil
 }

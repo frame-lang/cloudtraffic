@@ -1,6 +1,5 @@
 package main
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,16 +8,16 @@ import (
 )
 
 func main() {
-	fmt.Println("Traffic Light App V2 v0.1.0")
+	log.Println("Traffic Light App V2 started...")
 	setupRoutes()
 	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("WebSocket Endpoint Hit")
+	log.Println("WebSocket Endpoint Hit")
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
-		fmt.Fprintf(w, "%+v\n", err)
+		log.Printf("Error while serving websocket route ->", err)
 	}
 	timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	client := &websocket.Client{

@@ -4,10 +4,10 @@ import (
     "github.com/gorilla/websocket"
 )
 
-type Response struct {
+type PoolResponse struct {
     Type string    `json:"type"`
-    Message string `json:"message"`
-    ConnectedUsers int `json:"connectedUsers"`
+    NewUserID string `json:"newUserID"`
+    TotalConnectedUsers int `json:"totalConnectedUsers"`
 }
 
 type Pool struct {
@@ -21,4 +21,15 @@ type Client struct {
     Pool *Pool
 	Connection *websocket.Conn
     Stopper chan<- bool
+}
+
+type StateResponse struct {
+	Name    string `json:"name"`
+	Message string `json:"message"`
+	Loading bool   `json:"loading"`
+}
+
+type ResponseMessage struct {
+	Data       []byte            `json:"data"`
+	Attributes StateResponse `json:"attributes"`
 }

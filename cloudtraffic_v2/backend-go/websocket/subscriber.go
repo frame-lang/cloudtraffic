@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strconv"
 	"sync/atomic"
@@ -11,22 +10,12 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-type StateResponse struct {
-	Name    string `json:"name"`
-	Message string `json:"message"`
-	Loading bool   `json:"loading"`
-}
-
-type ResponseMessage struct {
-	Data       []byte            `json:"data"`
-	Attributes StateResponse `json:"attributes"`
-}
-
+// Use to pull the events emmited from Cloud function (TL service) 
 func PullMsgs() {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
-		fmt.Errorf("pubsub.NewClient: %v", err)
+		log.Println("Error while creating connection to Cloud PubSub ->", err)
 	}
 	defer client.Close()
 
@@ -41,7 +30,7 @@ func PullMsgs() {
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
-		fmt.Println("***Recieved message*** -> ", string(msg.Data), "\n")
+		log.Println("👉🏻 Event received from TL service ☁️ ->", string(msg.Data), "\n")
 		connectionID :=  msg.Attributes["ConnectionID"]
 		var activeUser *Client = Clients[connectionID]
 		if activeUser == nil {
@@ -49,8 +38,7 @@ func PullMsgs() {
 		}
 		
 		if string(msg.Data) == "enableTimer" {
-			log.Println("enableTimer")
-
+			log.Println("🕙 Enable timer for connection ID ", connectionID)
 			timerType := msg.Attributes["TimerType"]
 			if timerType == "workingTimer" {
 				activeUser.Stopper = setInterval(tick, 3*time.Second, connectionID)
@@ -61,7 +49,7 @@ func PullMsgs() {
 		}
 
 		if string(msg.Data) == "disableTimer" {
-			log.Println("disableTimer")
+			log.Println("🕙 Disable timer for connection ID ", connectionID)
 			activeUser.Stopper <- true
 			return
 		}
@@ -76,8 +64,6 @@ func PullMsgs() {
 			Loading: loading,
 		}
 
-		log.Println("Sending Response to UI ->", res)
-
 		if err := activeUser.Connection.WriteJSON(res); err != nil {
 			log.Println(err)
 			return
@@ -87,9 +73,8 @@ func PullMsgs() {
 	})
 
 	if err != nil {
-		fmt.Errorf("sub.Receive: %v", err)
+		log.Println("Error while receiving events", err)
 	}
-	fmt.Println("Received ", received, " messages")
-	fmt.Println("res", res)
+	log.Println("Received ", received, " messages")
 	return
 }

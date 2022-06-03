@@ -1,7 +1,8 @@
+// A pool of users which are active on the web-socket (All connected users) 
 package websocket
 
 import (
-	"fmt"
+	"log"
 )
 
 func NewPool() *Pool {
@@ -17,34 +18,34 @@ func (pool *Pool) Start() {
 		select {
 		case client := <-pool.Register:
 			pool.Clients[client] = true
-			fmt.Println("Client registered, Size of Connection Pool: ", len(pool.Clients))
+			log.Println("New user registered, Size of connection pool: ", len(pool.Clients))
 			for client, _ := range pool.Clients {
-				client.Connection.WriteJSON(Response{
+				client.Connection.WriteJSON(PoolResponse{
 					Type:           "addedInPool",
-					Message:        client.ID,
-					ConnectedUsers: len(pool.Clients),
+					NewUserID:        client.ID,
+					TotalConnectedUsers: len(pool.Clients),
 				})
 			}
 			break
 		case client := <-pool.Unregister:
-			fmt.Println("Client unregistered, Size of Connection Pool: ", len(pool.Clients))
+			log.Println("User ", client.ID, " is unregistered, Size of connection pool: ", len(pool.Clients))
 			for singleClient, _ := range pool.Clients {
 				if client.ID == singleClient.ID {
-					fmt.Println("Unregistered User ID ->", client.ID)
 					// Stop the timer for particular user
 					var activeUser *Client = Clients[client.ID]
 					activeUser.Stopper <- true
 
 					// Send event to remove user data from Redis
 					data := createPubSubMsg(client.ID, "connectionClosed")
-					publishToTLService(data)
+					publishToTLService(data, "connectionClosed")
 
+					// Remove user from the active user's pool
 					delete(pool.Clients, client)
 				}
-				client.Connection.WriteJSON(Response{
+				client.Connection.WriteJSON(PoolResponse{
 					Type:           "removedFromPool",
-					Message:        singleClient.ID,
-					ConnectedUsers: len(pool.Clients),
+					NewUserID:        singleClient.ID,
+					TotalConnectedUsers: len(pool.Clients),
 				})
 			}
 			break

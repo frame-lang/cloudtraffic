@@ -1,3 +1,4 @@
+// Contains the helper functions used in the package
 package websocket
 
 import (
@@ -36,7 +37,7 @@ func setInterval(p func(string), interval time.Duration, connectionID string) ch
 func tick(connectionID string) {
 	log.Println("Tick called for connectionID ->", connectionID)
 	data := createPubSubMsg(connectionID, "tick")
-	publishToTLService(data)
+	publishToTLService(data, "tick")
 }
 
 func createPubSubMsg(connectionID string, eventName string) pubsub.Message {
