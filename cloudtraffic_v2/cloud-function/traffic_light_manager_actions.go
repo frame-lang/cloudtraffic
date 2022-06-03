@@ -82,3 +82,15 @@ func (m *trafficLightManagerStruct) setInRedis(data []byte) {
 	}
 	log.Println("Worflow saved to Redis for User ID", connectionID, ".")
 }
+
+func (m *trafficLightManagerStruct) removeFromRedis() {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("DEL", connectionID)
+	if err != nil {
+		log.Printf("Error while removing data from Redis: %v", err)
+		return
+	}
+	log.Println("Removed successfully from Redis,  User ID ", connectionID, ".")
+}

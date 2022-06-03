@@ -12,7 +12,7 @@ export default function Header({
 }) {
     function handleClick() {
         if (state.name === STATES['END_STATE']) {
-            sendMessage('init')
+            sendMessage('createWorkflow')
             return
         }
         sendMessage('end')

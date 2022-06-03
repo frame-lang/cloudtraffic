@@ -6,7 +6,7 @@ import (
 )
 ```
 
-#TrafficLightManager >[isNewWorkflow:bool]
+#TrafficLightManager >[createWorkflow:bool]
 
     -interface-
 
@@ -26,12 +26,13 @@ import (
     systemError
     systemRestart
     destroyTrafficLight
+    connectionClosed
 
     -machine-
 
-    $Start => $HandleExternalEvents
-        |>|[isNewWorkflow:bool] 
-            isNewWorkflow ? 
+    $Start
+        |>|[createWorkflow:bool] 
+            createWorkflow ? 
             	-> "Create\nWorkflow" $Create 
             : 
             	-> "Load\nWorkflow" $Load 
@@ -58,7 +59,7 @@ import (
             trafficLight = nil 
             -> "Stop" $Stop ^
             
-    $Stop => $HandleExternalEvents
+    $Stop
 
         
     $HandleExternalEvents => $HandleControllerEvents
@@ -70,6 +71,8 @@ import (
             trafficLight.SystemRestart() -> "System\nRestart" $Save ^
         |end|
             trafficLight.Stop() -> "End" $Save ^
+        |connectionClosed|
+            removeFromRedis() -> "Connection Closed" $Stop ^
  
     $HandleControllerEvents
         |initTrafficLight| initTrafficLight() ^
@@ -97,6 +100,7 @@ import (
     initTrafficLight
     changeFlashingAnimation
     destroyTrafficLight
+    removeFromRedis
     setInRedis [data:`[]byte`]
     getFromRedis: `[]byte`
 

@@ -2,7 +2,7 @@
 // get include files at https://github.com/frame-lang/frame-ancillary-files
 package trafficlight
 
-func NewTrafficLightManager(isNewWorkflow bool) TrafficLightManager {
+func NewTrafficLightManager(createWorkflow bool) TrafficLightManager {
     m := &trafficLightManagerStruct{}
     
     // Validate interfaces
@@ -11,7 +11,7 @@ func NewTrafficLightManager(isNewWorkflow bool) TrafficLightManager {
     
     // Create and intialize start state compartment.
     m._compartment_ = NewTrafficLightManagerCompartment(TrafficLightManagerState_Start)
-    m._compartment_.EnterArgs["isNewWorkflow"] = isNewWorkflow
+    m._compartment_.EnterArgs["createWorkflow"] = createWorkflow
     
     // Override domain variables.
     m.trafficLight = nil
@@ -53,6 +53,7 @@ type TrafficLightManager interface {
     SystemError() 
     SystemRestart() 
     DestroyTrafficLight() 
+    ConnectionClosed() 
 }
 
 type TrafficLightManager_actions interface {
@@ -67,6 +68,7 @@ type TrafficLightManager_actions interface {
     initTrafficLight() 
     changeFlashingAnimation() 
     destroyTrafficLight() 
+    removeFromRedis() 
     setInRedis(data []byte) 
     getFromRedis() []byte
 }
@@ -160,6 +162,11 @@ func (m *trafficLightManagerStruct) DestroyTrafficLight()  {
     m._mux_(&e)
 }
 
+func (m *trafficLightManagerStruct) ConnectionClosed()  {
+    e := FrameEvent{Msg:"connectionClosed"}
+    m._mux_(&e)
+}
+
 //====================== Multiplexer ====================//
 
 func (m *trafficLightManagerStruct) _mux_(e *FrameEvent) {
@@ -205,7 +212,7 @@ func (m *trafficLightManagerStruct) _mux_(e *FrameEvent) {
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_Start_(e *FrameEvent) {
     switch e.Msg {
     case ">":
-        if e.Params["isNewWorkflow"].(bool) {
+        if e.Params["createWorkflow"].(bool) {
             // Create\nWorkflow
             compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Create)
             m._transition_(compartment)
@@ -216,8 +223,6 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_Start_(e *FrameEve
         }
         return
     }
-    m._TrafficLightManagerState_HandleExternalEvents_(e)
-    
 }
 
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_Create_(e *FrameEvent) {
@@ -270,8 +275,6 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_Save_(e *FrameEven
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_Stop_(e *FrameEvent) {
     switch e.Msg {
     }
-    m._TrafficLightManagerState_HandleExternalEvents_(e)
-    
 }
 
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_HandleExternalEvents_(e *FrameEvent) {
@@ -298,6 +301,12 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_HandleExternalEven
         m.trafficLight.Stop()
         // End
         compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
+        m._transition_(compartment)
+        return
+    case "connectionClosed":
+        m.removeFromRedis()
+        // Connection Closed
+        compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Stop)
         m._transition_(compartment)
         return
     }
@@ -377,6 +386,7 @@ func (m *trafficLightManagerStruct) stopFlashingTimer()  {}
 func (m *trafficLightManagerStruct) initTrafficLight()  {}
 func (m *trafficLightManagerStruct) changeFlashingAnimation()  {}
 func (m *trafficLightManagerStruct) destroyTrafficLight()  {}
+func (m *trafficLightManagerStruct) removeFromRedis()  {}
 func (m *trafficLightManagerStruct) setInRedis(data []byte)  {}
 func (m *trafficLightManagerStruct) getFromRedis() []byte {}
 

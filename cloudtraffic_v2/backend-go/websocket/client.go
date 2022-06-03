@@ -20,16 +20,14 @@ func (c *Client) Read() {
 
 		var data pubsub.Message
 		
-		if string(p) == "init" {
-			data = createPubSubMsg(c.ID, "init")
-		} else if string(p) == "error" {
-			data = createPubSubMsg(c.ID, "error")
-		} else if string(p) == "restart" {
-			data = createPubSubMsg(c.ID, "restart")
-		} else if string(p) == "end" {
-			data = createPubSubMsg(c.ID, "end")
-		}
-
+		/*
+		 * Events came from UI (string(p)) can be:
+		 * 1. createWorkflow
+		 * 2. error
+		 * 3. restart
+		 * 4. end
+		 */
+		data = createPubSubMsg(c.ID, string(p))
 		publishToTLService(data)
 	}
 }

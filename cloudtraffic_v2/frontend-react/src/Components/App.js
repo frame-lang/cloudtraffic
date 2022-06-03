@@ -39,7 +39,7 @@ function App() {
   }, [lastMessage]);
 
   useEffect(() => {
-    sendMessage('init')
+    sendMessage('createWorkflow')
   }, [])
 
   return (

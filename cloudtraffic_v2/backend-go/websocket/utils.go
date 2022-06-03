@@ -34,7 +34,7 @@ func setInterval(p func(string), interval time.Duration, connectionID string) ch
 }
 
 func tick(connectionID string) {
-	log.Println("Tick.....", connectionID)
+	log.Println("Tick called for connectionID ->", connectionID)
 	data := createPubSubMsg(connectionID, "tick")
 	publishToTLService(data)
 }

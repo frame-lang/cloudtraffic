@@ -59,14 +59,14 @@ func init() {
 func EntryPoint(_ctx context.Context, m PubSubMessage) error {
 	connectionID = m.Attributes.ConnectionID
 	var event string = m.Attributes.Event
-	var isNewWorkflow bool = false
+	var createWorkflow bool = false
 	log.Println("Connection ID ->", connectionID, ", Event ->", event, "Cloud function ID ->", cloudFunctionID)
 
-	if event == "init" {
-		isNewWorkflow = true
+	if event == "createWorkflow" {
+		createWorkflow = true
 	}
 
-	trafficLightManager := NewTrafficLightManager(isNewWorkflow)
+	trafficLightManager := NewTrafficLightManager(createWorkflow)
 
 	if event == "tick" {
 		trafficLightManager.Tick()
@@ -76,6 +76,8 @@ func EntryPoint(_ctx context.Context, m PubSubMessage) error {
 		trafficLightManager.SystemRestart()
 	} else if event == "end" {
 		trafficLightManager.End()
+	} else if event == "connectionClosed" {
+		trafficLightManager.ConnectionClosed()
 	}
 	
 	return nil
