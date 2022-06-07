@@ -58,7 +58,7 @@ func (m *trafficLightManagerStruct) changeFlashingAnimation() {
 	publishResponse("error", color, "false")
 }
 
-func (m *trafficLightManagerStruct) getFromRedis() []byte {
+func (m *trafficLightManagerStruct) getWorkflowFromRedis() []byte {
 	conn := redisPool.Get()
 	defer conn.Close()
 
@@ -71,7 +71,7 @@ func (m *trafficLightManagerStruct) getFromRedis() []byte {
 	return []byte(data)
 }
 
-func (m *trafficLightManagerStruct) setInRedis(data []byte) {
+func (m *trafficLightManagerStruct) setWorkflowInRedis(data []byte) {
 	conn := redisPool.Get()
 	defer conn.Close()
 
@@ -83,7 +83,7 @@ func (m *trafficLightManagerStruct) setInRedis(data []byte) {
 	log.Println("Worflow saved to Redis for User ID", connectionID, ".")
 }
 
-func (m *trafficLightManagerStruct) removeFromRedis() {
+func (m *trafficLightManagerStruct) removeWorkflowFromRedis() {
 	conn := redisPool.Get()
 	defer conn.Close()
 

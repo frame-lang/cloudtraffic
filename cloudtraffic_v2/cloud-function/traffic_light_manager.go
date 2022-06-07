@@ -68,9 +68,9 @@ type TrafficLightManager_actions interface {
     initTrafficLight() 
     changeFlashingAnimation() 
     destroyTrafficLight() 
-    removeFromRedis() 
-    setInRedis(data []byte) 
-    getFromRedis() []byte
+    removeWorkflowFromRedis() 
+    setWorkflowInRedis(data []byte) 
+    getWorkflowFromRedis() []byte
 }
 
 
@@ -242,8 +242,8 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_Create_(e *FrameEv
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_Load_(e *FrameEvent) {
     switch e.Msg {
     case ">":
-        var savedData  = m.getFromRedis()
-        m.trafficLight = LoadTrafficLight(m,savedData)
+        var workflowData  = m.getWorkflowFromRedis()
+        m.trafficLight = LoadTrafficLight(m,workflowData)
         compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Working)
         m._changeState_(compartment)
         return
@@ -262,8 +262,8 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_Working_(e *FrameE
 func (m *trafficLightManagerStruct) _TrafficLightManagerState_Save_(e *FrameEvent) {
     switch e.Msg {
     case ">":
-        var jsonData  = m.trafficLight.Marshal()
-        m.setInRedis(jsonData)
+        var workflowData  = m.trafficLight.Marshal()
+        m.setWorkflowInRedis(workflowData)
         m.trafficLight = nil
         // Stop
         compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Stop)
@@ -304,7 +304,7 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_HandleExternalEven
         m._transition_(compartment)
         return
     case "connectionClosed":
-        m.removeFromRedis()
+        m.removeWorkflowFromRedis()
         // Connection Closed
         compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Stop)
         m._transition_(compartment)
@@ -386,9 +386,9 @@ func (m *trafficLightManagerStruct) stopFlashingTimer()  {}
 func (m *trafficLightManagerStruct) initTrafficLight()  {}
 func (m *trafficLightManagerStruct) changeFlashingAnimation()  {}
 func (m *trafficLightManagerStruct) destroyTrafficLight()  {}
-func (m *trafficLightManagerStruct) removeFromRedis()  {}
-func (m *trafficLightManagerStruct) setInRedis(data []byte)  {}
-func (m *trafficLightManagerStruct) getFromRedis() []byte {}
+func (m *trafficLightManagerStruct) removeWorkflowFromRedis()  {}
+func (m *trafficLightManagerStruct) setWorkflowInRedis(data []byte)  {}
+func (m *trafficLightManagerStruct) getWorkflowFromRedis() []byte {}
 
 ********************************************************/
 

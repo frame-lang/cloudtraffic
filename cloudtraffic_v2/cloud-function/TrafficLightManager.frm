@@ -46,16 +46,16 @@ import (
             
     $Load => $HandleExternalEvents
     	|>|
-            var savedData = getFromRedis()
-            trafficLight = LoadTrafficLight(# savedData)
+            var workflowData = getWorkflowFromRedis()
+            trafficLight = LoadTrafficLight(# workflowData)
             ->> "Loaded" $Working ^
  
  	$Working => $HandleExternalEvents
     
     $Save
         |>|
-            var jsonData = trafficLight.Marshal() 
-            setInRedis(jsonData)
+            var workflowData = trafficLight.Marshal() 
+            setWorkflowInRedis(workflowData)
             trafficLight = nil 
             -> "Stop" $Stop ^
             
@@ -72,7 +72,7 @@ import (
         |end|
             trafficLight.Stop() -> "End" $Save ^
         |connectionClosed|
-            removeFromRedis() -> "Connection Closed" $Stop ^
+            removeWorkflowFromRedis() -> "Connection Closed" $Stop ^
  
     $HandleControllerEvents
         |initTrafficLight| initTrafficLight() ^
@@ -100,9 +100,9 @@ import (
     initTrafficLight
     changeFlashingAnimation
     destroyTrafficLight
-    removeFromRedis
-    setInRedis [data:`[]byte`]
-    getFromRedis: `[]byte`
+    removeWorkflowFromRedis
+    setWorkflowInRedis [data:`[]byte`]
+    getWorkflowFromRedis: `[]byte`
 
     -domain-
 
