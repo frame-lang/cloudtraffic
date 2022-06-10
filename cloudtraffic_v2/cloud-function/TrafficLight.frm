@@ -14,7 +14,6 @@ import (
 
     -interface-
 
-    start @(|>>|)
     stop 
     tick
     systemError
@@ -25,7 +24,7 @@ import (
     -machine-
 
     $Begin
-        |>>|
+        |>|
             initTrafficLight()
             startWorkingTimer()
             -> $Red ^
@@ -64,7 +63,8 @@ import (
             -> $Red  ^
         |stop|
             -> $End ^
-        |getColor|:string @^ = flashColor ^
+        |getColor|:string 
+        	^(flashColor)
     
     $End
         |>|
@@ -79,7 +79,8 @@ import (
             -> $FlashingRed ^
         |changeColor|[color:string]
             flashColor = color ^
-        |getColor|:string @^ = flashColor ^
+        |getColor|:string 
+        	^(flashColor)
 
     -actions-
 

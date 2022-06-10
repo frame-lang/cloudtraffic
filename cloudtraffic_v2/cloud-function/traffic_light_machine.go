@@ -45,7 +45,6 @@ type Marshal interface {
 
 type TrafficLight interface {
     Marshal
-    Start() 
     Stop() 
     Tick() 
     SystemError() 
@@ -123,11 +122,6 @@ func (m *trafficLightStruct) Marshal() []byte {
 }
 //===================== Interface Block ===================//
 
-func (m *trafficLightStruct) Start()  {
-    e := FrameEvent{Msg:">>"}
-    m._mux_(&e)
-}
-
 func (m *trafficLightStruct) Stop()  {
     e := FrameEvent{Msg:"stop"}
     m._mux_(&e)
@@ -203,7 +197,7 @@ func (m *trafficLightStruct) _mux_(e *FrameEvent) {
 
 func (m *trafficLightStruct) _TrafficLightState_Begin_(e *FrameEvent) {
     switch e.Msg {
-    case ">>":
+    case ">":
         m.initTrafficLight()
         m.startWorkingTimer()
         compartment := NewTrafficLightCompartment(TrafficLightState_Red)
@@ -282,6 +276,7 @@ func (m *trafficLightStruct) _TrafficLightState_FlashingRed_(e *FrameEvent) {
     case "getColor":
         e.Ret = m.flashColor
         return
+        
     }
 }
 
@@ -311,6 +306,7 @@ func (m *trafficLightStruct) _TrafficLightState_Working_(e *FrameEvent) {
     case "getColor":
         e.Ret = m.flashColor
         return
+        
     }
 }
 
