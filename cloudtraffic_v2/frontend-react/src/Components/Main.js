@@ -21,13 +21,13 @@ export default function Layout({state, sendMessage}) {
     if (state.name === STATES['BEGIN_STATE']) {
       setActiveState(BEGIN_STATE);
     } else if (state.name === STATES['WORKING_STATE']) {
-      setActiveState(WORKING_STATE[state.message]);
+      setActiveState(WORKING_STATE[state.color]);
     } else if (state.name === STATES['ERROR_STATE']) {
-      setActiveState(SYSTEM_ERROR_STATE[state.message]);
+      setActiveState(SYSTEM_ERROR_STATE[state.color]);
     } else if (state.name === STATES['END_STATE']) {
       setActiveState(END_STATE);
     }
-  }, [state.name, state.message])
+  }, [state.name, state.color])
 
     return (
       <main>

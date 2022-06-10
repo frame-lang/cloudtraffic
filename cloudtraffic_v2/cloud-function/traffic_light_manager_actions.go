@@ -8,54 +8,53 @@ import (
 )
 
 func (m *trafficLightManagerStruct) initTrafficLight() {
-	publishResponse("begin", "", "true")
-	time.Sleep(2 * time.Second)
+	sendMessage("sendResponseToUI", "begin", "", "true")
+	time.Sleep(1 * time.Second)
 }
 
 func (m *trafficLightManagerStruct) destroyTrafficLight() {
-	publishResponse("end", "", "false")
+	sendMessage("sendResponseToUI", "end", "", "false")
 }
 
 func (m *trafficLightManagerStruct) enterRed() {
 	color := m.trafficLight.GetColor()
-	publishResponse("working", color, "false")
+	sendMessage("sendResponseToUI", "working", color, "false")
 }
 
 func (m *trafficLightManagerStruct) enterGreen() {
 	color := m.trafficLight.GetColor()
-	publishResponse("working", color, "false")
+	sendMessage("sendResponseToUI", "working", color, "false")
 }
 
 func (m *trafficLightManagerStruct) enterYellow() {
 	color := m.trafficLight.GetColor()
-	publishResponse("working", color, "false")
+	sendMessage("sendResponseToUI", "working", color, "false")
 }
 
 func (m *trafficLightManagerStruct) enterFlashingRed() {
 	color := m.trafficLight.GetColor()
-	publishResponse("error", color, "false")
+	sendMessage("sendResponseToUI", "error", color, "false")
 }
 
 func (m *trafficLightManagerStruct) startWorkingTimer() {
-	publishTimerEvent("enableTimer", "workingTimer")
+	sendMessage("timerEvent", "startWorkingTimer", "", "")
 }
 
 func (m *trafficLightManagerStruct) stopWorkingTimer() {
-	publishTimerEvent("disableTimer", "workingTimer")
+	sendMessage("timerEvent", "stopWorkingTimer", "", "")
 }
 
 func (m *trafficLightManagerStruct) startFlashingTimer() {
-	publishTimerEvent("enableTimer", "flashingTimer")
+	sendMessage("timerEvent", "startFlashingTimer", "", "")
 }
 
 func (m *trafficLightManagerStruct) stopFlashingTimer() {
-	publishTimerEvent("disableTimer", "flashingTimer")
+	sendMessage("timerEvent", "stopFlashingTimer", "", "")
 }
-
 
 func (m *trafficLightManagerStruct) changeFlashingAnimation() {
 	color := m.trafficLight.GetColor()
-	publishResponse("error", color, "false")
+	sendMessage("sendResponseToUI", "error", color, "false")
 }
 
 func (m *trafficLightManagerStruct) getWorkflowFromRedis() []byte {

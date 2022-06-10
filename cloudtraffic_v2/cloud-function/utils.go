@@ -9,13 +9,18 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-func publishResponse(state string, message string, loading string) {
+func sendMessage(
+	msgType string,
+	event string,
+	color string,
+	loading string,
+) {
 	result := topic.Publish(ctx, &pubsub.Message{
-		Data: []byte("sendResponse"),
+		Data: []byte(msgType),
 		Attributes: map[string]string {
 			"ConnectionID": connectionID,
-			"Name": state,
-			"Message": message,
+			"Event": event,
+			"Color": color,
 			"Loading":loading,
 		},
 	})
@@ -26,23 +31,6 @@ func publishResponse(state string, message string, loading string) {
 		fmt.Errorf("Get: %v", err)
 	}
 	fmt.Println("Published a message to Utils service; msg ID: ", id)
-}
-
-func publishTimerEvent(eventName string, timerType string) {
-	result := topic.Publish(ctx, &pubsub.Message{
-		Data: []byte(eventName),
-		Attributes: map[string]string {
-			"ConnectionID": connectionID,
-			"TimerType": timerType,
-		},
-	})
-	// Block until the result is returned and a server-generated
-	// ID is returned for the published message.
-	id, err := result.Get(ctx)
-	if err != nil {
-		fmt.Errorf("Get: %v", err)
-	}
-	fmt.Println("Published a message; msg ID: ", id)
 }
 
 func initializeRedis() (*redis.Pool, error) {

@@ -37,20 +37,16 @@ func PullMsgs() {
 			return
 		}
 		
-		if string(msg.Data) == "enableTimer" {
-			log.Println("🕙 Enable timer for connection ID ", connectionID)
-			timerType := msg.Attributes["TimerType"]
-			if timerType == "workingTimer" {
+		if string(msg.Data) == "timerEvent" {
+			event := msg.Attributes["Event"]
+			log.Println("🕙 Timer Event received for connection ID", connectionID, "->", event)
+			if event == "startWorkingTimer" {
 				activeUser.Stopper = setInterval(tick, 3*time.Second, connectionID)
-			} else if timerType == "flashingTimer" {
+			} else if event == "startFlashingTimer" {
 				activeUser.Stopper = setInterval(tick, 2*time.Second, connectionID)
+			} else if event == "stopWorkingTimer" || event == "stopFlashingTimer" {
+				activeUser.Stopper <- true
 			}
-			return
-		}
-
-		if string(msg.Data) == "disableTimer" {
-			log.Println("🕙 Disable timer for connection ID ", connectionID)
-			activeUser.Stopper <- true
 			return
 		}
 
@@ -59,8 +55,8 @@ func PullMsgs() {
             log.Fatal(err)
         }
 		res = StateResponse {
-			Name: msg.Attributes["Name"],
-			Message: msg.Attributes["Message"],
+			Name: msg.Attributes["Event"],
+			Color: msg.Attributes["Color"],
 			Loading: loading,
 		}
 

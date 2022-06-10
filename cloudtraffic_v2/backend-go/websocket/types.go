@@ -25,7 +25,7 @@ type Client struct {
 
 type StateResponse struct {
 	Name    string `json:"name"`
-	Message string `json:"message"`
+	Color string `json:"color"`
 	Loading bool   `json:"loading"`
 }
 
