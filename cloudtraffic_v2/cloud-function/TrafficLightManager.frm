@@ -41,6 +41,7 @@ import (
 	$Create => $HandleExternalEvents
     	|>|
             trafficLight = NewTrafficLight(#)
+            trafficLight.Start() 
              -> "Created" $Save ^
             
     $Load => $HandleExternalEvents

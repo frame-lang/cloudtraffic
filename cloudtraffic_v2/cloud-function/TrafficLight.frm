@@ -14,6 +14,7 @@ import (
 
     -interface-
 
+    start
     stop 
     tick
     systemError
@@ -24,7 +25,7 @@ import (
     -machine-
 
     $Begin
-        |>|
+        |start|
             initTrafficLight()
             startWorkingTimer()
             -> $Red ^

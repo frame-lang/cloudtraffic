@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"os"
 	"errors"
+	"context"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gomodule/redigo/redis"
+	"google.golang.org/api/option"
+
 )
 
 func sendMessage(
@@ -15,8 +18,24 @@ func sendMessage(
 	color string,
 	loading string,
 ) {
+	var ctx context.Context = context.Background()
+	var client, err = pubsub.NewClient(
+		ctx,
+		os.Getenv("PROJECTID"),
+		option.WithEndpoint("us-central1-pubsub.googleapis.com:443"),
+	)
+	if err != nil {
+		fmt.Errorf("pubsub.NewClient: %v", err)
+	}
+	defer client.Close()
+
+	// Enable order messaging
+	var topic *pubsub.Topic = client.Topic(os.Getenv("TOPICID"))
+	topic.EnableMessageOrdering = true
+
 	result := topic.Publish(ctx, &pubsub.Message{
 		Data: []byte(msgType),
+		OrderingKey: "tl-service", // To publish messages in oder
 		Attributes: map[string]string {
 			"ConnectionID": connectionID,
 			"Event": event,
@@ -24,6 +43,7 @@ func sendMessage(
 			"Loading":loading,
 		},
 	})
+
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.
 	id, err := result.Get(ctx)

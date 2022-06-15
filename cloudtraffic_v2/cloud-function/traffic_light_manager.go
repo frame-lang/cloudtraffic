@@ -229,6 +229,7 @@ func (m *trafficLightManagerStruct) _TrafficLightManagerState_Create_(e *FrameEv
     switch e.Msg {
     case ">":
         m.trafficLight = NewTrafficLight(m)
+        m.trafficLight.Start()
         // Created
         compartment := NewTrafficLightManagerCompartment(TrafficLightManagerState_Save)
         m._transition_(compartment)

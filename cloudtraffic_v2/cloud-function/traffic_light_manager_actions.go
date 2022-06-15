@@ -1,15 +1,12 @@
 package trafficlight
 
 import (
-	"time"
 	"log"
-
 	"github.com/gomodule/redigo/redis"
 )
 
 func (m *trafficLightManagerStruct) initTrafficLight() {
 	sendMessage("sendResponseToUI", "begin", "", "true")
-	time.Sleep(1 * time.Second)
 }
 
 func (m *trafficLightManagerStruct) destroyTrafficLight() {

@@ -4,10 +4,8 @@ package trafficlight
 import (
 	"context"
 	"log"
-	"os"
 	"strconv"
 	"time"
-	"cloud.google.com/go/pubsub"
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -22,37 +20,22 @@ type PubSubMessage struct {
 }
 
 var (
-	topic *pubsub.Topic
-	client *pubsub.Client
 	connectionID string
     redisPool *redis.Pool
 	cloudFunctionID string
-	ctx context.Context = context.Background()
 )
 
 func init() {
-	// For testing
+	// For checking when a new intance is created
 	cloudFunctionID = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	log.Println("A new cloud function is being inilialized: ", cloudFunctionID)
-
-	// err is pre-declared to avoid shadowing client.
-	var err error
-
-	// client is initialized with context.Background() because it should
-	// persist between function invocations.
-	client, err = pubsub.NewClient(ctx, os.Getenv("PROJECTID"))
-	if err != nil {
-		log.Fatalf("pubsub.NewClient: %v", err)
-	}
-
-	topic = client.Topic(os.Getenv("TOPICID"))
 
 	// Initialize Redis
 	var redisError error
 	redisPool, redisError = initializeRedis()
 	if redisError != nil {
-			log.Printf("initializeRedis: %v", err)
-			return
+		log.Printf("initializeRedis: %v", redisError)
+		return
 	}
 }
 

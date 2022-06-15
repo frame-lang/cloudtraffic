@@ -17,7 +17,7 @@ func publishToTLService(data pubsub.Message, eventName string) {
 	}
 	defer client.Close()
 
-	t := client.Topic(TOPIC_ID)
+	t := client.Topic(TL_TOPIC_ID)
 	result := t.Publish(ctx, &data)
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.

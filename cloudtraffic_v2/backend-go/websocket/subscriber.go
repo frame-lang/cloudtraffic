@@ -3,6 +3,7 @@ package websocket
 import (
 	"context"
 	"log"
+	"fmt"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -12,6 +13,7 @@ import (
 
 // Use to pull the events emmited from Cloud function (TL service) 
 func PullMsgs() {
+	log.Println("Pull subscriber is listening... 🎧")
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, PROJECT_ID)
 	if err != nil {
@@ -22,6 +24,27 @@ func PullMsgs() {
 	sub := client.Subscription(SUBSCRIPTION_ID)
 	var res StateResponse
 
+	ok, err := sub.Exists(ctx)
+	if err != nil {
+		fmt.Errorf("Error while checking subscription exists", err)
+	}
+
+	// Create a new subscription, if not exsited
+	if !ok {
+		log.Println("Subscription not exists, creating a new one...")
+		topic := client.Topic(UTILS_TOPIC_ID)
+
+		sub, err := client.CreateSubscription(ctx, SUBSCRIPTION_ID, pubsub.SubscriptionConfig{
+			Topic:                 topic,
+			AckDeadline:           20 * time.Second,
+			EnableMessageOrdering: true,
+		})
+		if err != nil {
+				fmt.Errorf("Error while creating new subscription  %v ->", err)
+		}
+		log.Println("✅ Subscription created successfully ->", sub)
+	}
+
 	// Receive messages for 10 seconds, which simplifies testing.
 	// Comment this out in production, since `Receive` should
 	// be used as a long running operation.
@@ -30,20 +53,22 @@ func PullMsgs() {
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
-		log.Println("👉🏻 Event received from TL service ☁️ ->", string(msg.Data), "\n")
+		atomic.AddInt32(&received, 1)
+		msg.Ack()
 		connectionID :=  msg.Attributes["ConnectionID"]
 		var activeUser *Client = Clients[connectionID]
 		if activeUser == nil {
 			return
 		}
+		event := msg.Attributes["Event"]
+		log.Println("👉🏻 Event received from TL service ☁️ ->", string(msg.Data))
 		
 		if string(msg.Data) == "timerEvent" {
-			event := msg.Attributes["Event"]
 			log.Println("🕙 Timer Event received for connection ID", connectionID, "->", event)
 			if event == "startWorkingTimer" {
-				activeUser.Stopper = setInterval(tick, 3*time.Second, connectionID)
+				activeUser.Stopper = setInterval(tick, 1*time.Second, connectionID)
 			} else if event == "startFlashingTimer" {
-				activeUser.Stopper = setInterval(tick, 2*time.Second, connectionID)
+				activeUser.Stopper = setInterval(tick, 1*time.Second, connectionID)
 			} else if event == "stopWorkingTimer" || event == "stopFlashingTimer" {
 				activeUser.Stopper <- true
 			}
@@ -55,7 +80,7 @@ func PullMsgs() {
             log.Fatal(err)
         }
 		res = StateResponse {
-			Name: msg.Attributes["Event"],
+			Name: event,
 			Color: msg.Attributes["Color"],
 			Loading: loading,
 		}
@@ -64,8 +89,6 @@ func PullMsgs() {
 			log.Println(err)
 			return
 		}
-		atomic.AddInt32(&received, 1)
-		msg.Ack()
 	})
 
 	if err != nil {
