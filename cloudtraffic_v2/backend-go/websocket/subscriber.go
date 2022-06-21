@@ -66,11 +66,14 @@ func PullMsgs() {
 		if string(msg.Data) == "timerEvent" {
 			log.Println("🕙 Timer Event received for connection ID", connectionID, "->", event)
 			if event == "startWorkingTimer" {
-				activeUser.Stopper = setInterval(tick, 1*time.Second, connectionID)
-			} else if event == "startFlashingTimer" {
-				activeUser.Stopper = setInterval(tick, 1*time.Second, connectionID)
-			} else if event == "stopWorkingTimer" || event == "stopFlashingTimer" {
-				activeUser.Stopper <- true
+				activeUser.Timer = setInterval(tick, activeUser.WorkingTimer, connectionID)
+				activeUser.TickInProgress = true
+				} else if event == "startFlashingTimer" {
+				activeUser.Timer = setInterval(tick, activeUser.FlashingTimer, connectionID)
+				activeUser.TickInProgress = true
+				} else if event == "stopWorkingTimer" || event == "stopFlashingTimer" {
+				activeUser.Timer <- true
+				activeUser.TickInProgress = false
 			}
 			return
 		}

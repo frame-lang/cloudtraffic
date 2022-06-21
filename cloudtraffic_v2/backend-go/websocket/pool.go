@@ -33,7 +33,8 @@ func (pool *Pool) Start() {
 				if client.ID == singleClient.ID {
 					// Stop the timer for particular user
 					var activeUser *Client = Clients[client.ID]
-					activeUser.Stopper <- true
+					activeUser.Timer <- true
+					activeUser.TickInProgress = false
 
 					// Send event to remove user data from Redis
 					data := createPubSubMsg(client.ID, "connectionClosed")

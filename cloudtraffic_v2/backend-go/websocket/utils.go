@@ -14,7 +14,8 @@ func AddClient(ID string, client *Client) {
 	Clients[ID] = client
 }
 
-func setInterval(p func(string), interval time.Duration, connectionID string) chan<- bool {
+func setInterval(p func(string), intervalInSec string, connectionID string) chan<- bool {
+	interval, _ := time.ParseDuration(intervalInSec)
 	ticker := time.NewTicker(interval)
 	stopIt := make(chan bool)
 	go func() {

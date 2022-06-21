@@ -39,7 +39,7 @@ function App() {
   }, [lastMessage]);
 
   useEffect(() => {
-    sendMessage('createWorkflow')
+    sendMessage(JSON.stringify({event: 'createWorkflow'}))
   }, [])
 
   return (

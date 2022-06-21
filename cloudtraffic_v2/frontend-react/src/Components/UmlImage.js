@@ -15,7 +15,6 @@ const mapping = {
 };
 
 export default function ({ img }) {
-
     return (
         <img className='umg-img' src={mapping[img]}/>
     )

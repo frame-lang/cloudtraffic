@@ -65,3 +65,34 @@ export const STATES = {
    'ERROR_STATE': 'error',
    'END_STATE': 'end'
 };
+
+export const SLIDER_MARKS = [
+   {
+      value: 0,
+      label: '0',
+   },
+   {
+      value: 1,
+      label: '1',
+   },
+   {
+      value: 2,
+      label: '2',
+   },
+   {
+      value: 3,
+      label: '3',
+   },
+   {
+      value: 4,
+      label: '4',
+   },
+   {
+      value: 5,
+      label: '5',
+   },
+];
+
+export const DEFAULT_WOKRING_INTERVAL = 2; // In seconds
+
+export const DEFAULT_FLASHING_INTERVAL = 1; // In seconds

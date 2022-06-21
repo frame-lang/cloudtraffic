@@ -7,7 +7,15 @@ const Footer = ({connectionStatus}) => {
             alignItems: 'center',
             paddingLeft: '20px'
         }}>
-            Connection Status: <b> {connectionStatus} </b> 
+            <span style={{
+                color: '#737272'
+            }}>Connection Status:</span>
+            <span style={{
+                color: '#494949',
+                marginLeft: '6px',
+                fontWeight: '500'
+
+            }}>{connectionStatus}</span>
         </div>
     )
 }

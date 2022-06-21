@@ -20,7 +20,10 @@ type Client struct {
     ID   string
     Pool *Pool
 	Connection *websocket.Conn
-    Stopper chan<- bool
+    Timer chan<- bool
+    TickInProgress bool
+    WorkingTimer string
+    FlashingTimer string
 }
 
 type StateResponse struct {
@@ -32,4 +35,10 @@ type StateResponse struct {
 type ResponseMessage struct {
 	Data       []byte            `json:"data"`
 	Attributes StateResponse `json:"attributes"`
+}
+
+type UIMessage struct {
+    Event	string `json:"event"`
+    State 	string `json:"state"`
+    Data 	string `json:"data"`
 }

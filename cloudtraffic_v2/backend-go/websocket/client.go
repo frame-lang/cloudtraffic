@@ -14,14 +14,14 @@ func (c *Client) Read() {
 
 	// Inifite loop to constantly keep an eye on events received from UI for a particular user
 	for {
-		_, p, err := c.Connection.ReadMessage()
+		var UIMsg UIMessage
+		err := c.Connection.ReadJSON(&UIMsg)
 		if err != nil {
 			log.Println("Error while reading messages for connection ID ", c.ID, "Error  -> " ,  err)
 			return
 		}
 
-		var data pubsub.Message
-		var event string = string(p)
+		var event string = UIMsg.Event
 		log.Println("👉🏻 Event received from the UI 💻 ->", event)
 		/*
 		 * Events came from UI can be:
@@ -29,8 +29,34 @@ func (c *Client) Read() {
 		 * 2. error
 		 * 3. restart
 		 * 4. end
+		 * 5. updateWorkingTimer
+		 * 6. updateFlashingTimer
 		 */
-		data = createPubSubMsg(c.ID, event)
-		publishToTLService(data, event)
+
+		if event == "updateWorkingTimer" || event == "updateFlashingTimer" {
+			var activeUser *Client = Clients[c.ID]
+			if !activeUser.TickInProgress {
+				return
+			}
+			if event == "updateWorkingTimer" {
+				activeUser.WorkingTimer = UIMsg.Data
+				// Update the exsiting running timer only if state is Working and we updated the Working timer interval
+				if UIMsg.State == "working" {
+					activeUser.Timer <- true
+					activeUser.Timer = setInterval(tick,  activeUser.WorkingTimer, c.ID)
+				}
+			} else if event == "updateFlashingTimer" {
+				activeUser.FlashingTimer = UIMsg.Data
+				// Update the exsiting running timer only if state is Error and we updated the Error timer interval
+				if UIMsg.State == "error" {
+					activeUser.Timer <- true
+					activeUser.Timer = setInterval(tick,  activeUser.FlashingTimer, c.ID)
+				}
+			}
+		} else {
+			var data pubsub.Message
+			data = createPubSubMsg(c.ID, event)
+			publishToTLService(data, event)
+		}
 	}
 }

@@ -1,8 +1,8 @@
 export default function TrafficLightImage({ color }) {
 
     return (
-    <svg height="550px" version="1.1" id="Capa_1" x="0px" y="0px"
-        viewBox="0 0 480 480" style={{"enableBackground": "new 0 0 480 480"}}>
+    <svg version="1.1" id="Capa_1" 
+        viewBox="0 0 480 480">
         <g>
            <path style={{"fill": "#826E77"}} d="M240,328.76h-6.585c-0.526,0-1.032,0.091-1.517,0.233c-1.802,0.529-3.25,1.964-3.723,3.858
               l-4.379,17.514v108.029h0H240V328.76z"/>

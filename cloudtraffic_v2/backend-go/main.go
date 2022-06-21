@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	log.Println("Traffic Light App V2 started...")
+	log.Println("Traffic Light App V2 started... 🚦")
 	setupRoutes()
 	log.Fatal(http.ListenAndServe(":9000", nil))
 }
@@ -24,7 +24,10 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		ID:   timestamp,
 		Pool: pool,
 		Connection: conn,
-		Stopper: nil,
+		Timer: nil,
+		TickInProgress: false,
+		WorkingTimer: "2s",
+		FlashingTimer: "1s",
 	}
 	pool.Register <- client
 	websocket.AddClient(timestamp, client)
