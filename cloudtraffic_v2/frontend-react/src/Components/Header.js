@@ -3,6 +3,7 @@ import { LoadingButton } from '@mui/lab';
 import TrafficIcon from '@mui/icons-material/Traffic';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { STATES } from '../Utils/Constants';
+import { isMobile } from 'react-device-detect';
 
 export default function Header({
     state,
@@ -37,8 +38,8 @@ export default function Header({
                             variant="contained"
                         >
                             {state.loading && 'Loading...'}
-                            {(!state.loading && state.name === STATES['END_STATE']) && 'Create Traffic Light' }
-                            {(!state.loading && state.name !== STATES['END_STATE']) && 'Destroy Traffic Light' }
+                            {(!state.loading && state.name === STATES['END_STATE']) && `Create ${isMobile ? '' : 'Workflow'}` }
+                            {(!state.loading && state.name !== STATES['END_STATE']) && `Destroy ${isMobile ? '' : 'Workflow'}` }
                         </LoadingButton>
                     ) : (
                         <Button onClick={reconnect} variant="contained" color='success' startIcon={<AutorenewIcon />}>

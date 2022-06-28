@@ -5,7 +5,6 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import '../App.css';
 import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
 
 const socketUrl = `ws://${window.location.hostname}:9000/ws`;
 
@@ -45,8 +44,7 @@ function App() {
   return (
     <div className="App">
       <Header state={state} sendMessage={sendMessage} connectionStatus={connectionStatus} reconnect={reconnect}/>
-      <Main state={state} sendMessage={sendMessage}/>
-      <Footer connectionStatus={connectionStatus} />
+      <Main state={state} sendMessage={sendMessage} connectionStatus={connectionStatus}/>
     </div>
   );
 }

@@ -5,6 +5,9 @@ import green from '../Assets/Images/green.svg'
 import flashingRed from '../Assets/Images/flashing_red.svg'
 import end from '../Assets/Images/end.svg'
 
+import { isMobile } from 'react-device-detect';
+import './UmlImage.css'
+
 const mapping = {
     begin,
     red,
@@ -14,8 +17,8 @@ const mapping = {
     end
 };
 
-export default function ({ img }) {
+export default function UmlImage  ({ img }) {
     return (
-        <img className='umg-img' src={mapping[img]}/>
+        <img className={`${isMobile ? 'uml-img-mobile' : 'uml-img'}`} alt='umlImage' src={mapping[img]}/>
     )
 }
