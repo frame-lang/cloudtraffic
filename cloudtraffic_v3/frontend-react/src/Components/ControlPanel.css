@@ -1,0 +1,44 @@
+.control-section-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-section-title {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: #5B5B5B;
+}
+
+.control-title {
+    font-weight: 500;
+    color: #838383;
+    margin-top: 10px;
+}
+
+.line-break {
+    margin: 20px 0;
+}
+
+.connection-status {
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+.connection-status-open {
+    color: #30B900;
+}
+
+.connection-status-closed {
+    color: #FF4545;
+}
+
+.interval-slider {
+    margin-top: 45px;
+}
+
+.control-panel-button {
+    margin: 5px 0 !important;
+
+}

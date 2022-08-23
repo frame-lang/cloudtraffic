@@ -1,0 +1,19 @@
+.image-container {
+    flex: 1;
+}
+
+.code-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 554px;
+}
+
+.action-container {
+    min-height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
