@@ -1,0 +1,32 @@
+.tl-container {
+    display: flex;
+    align-items: center;
+    margin: 14px 0;
+    margin-right: -52px;
+  }
+
+.trafficLight {
+    background-color: #9D9E9E;
+    width: 210px;
+    height: 82px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 15px 5px;
+    border-radius: 20px;
+    box-shadow: -4px 6px 9px 0px rgba(173,173,173,1);
+}
+
+.trafficLight span {
+    width: 55px;
+    height: 55px;
+    border-radius: 100%;
+}
+
+.stick {
+    background-color: #767676;
+    width: 120px;
+    height: 18px;
+    box-shadow: -4px 6px 9px 0px rgba(173,173,173,1);
+}
