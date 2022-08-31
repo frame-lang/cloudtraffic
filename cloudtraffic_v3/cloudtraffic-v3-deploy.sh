@@ -49,7 +49,7 @@ echo "Creating Build..."
 npm run build
 
 echo "Running FE as a service..."
-pm2 restart v2 
+pm2 restart v3-frontend
 pm2 save
 
 echo "Cloud Traffic V2 Deployment is Done."
